@@ -51,18 +51,21 @@ if(isset($_POST['addpackage']) AND $_POST['addpackage']!="") {
 */
 
 // REMOVE ACTION
+$dellist=array();
 if(isset($_POST['delete'])) {
-	$length=count($actionlist);
 	foreach($_POST as $key => $value) {
 		if(substr($key,0,6)=="action") {
 			$delkey=array_search($value, $actionlist);
+			array_push($dellist, $actionlist[$delkey]);
 			unset($actionlist[$delkey]);
 		}
 	}
-	my_authenticate($prodebians['id_owner']);
-	pg_query($database, "UPDATE prodebians SET actionlist='".my_array2string($actionlist)."' WHERE id_prodebian=".$_SESSION['id_prodebian'].";") or die();
-	///////////FIX///////////////pg_query($database, "DELETE FROM actions WHERE id_action='".$actionlist[$delkey]"';") or die();
-	my_gotopage("actionlist.php");
+	if(count($dellist)>0) {
+		my_authenticate($prodebians['id_owner']);
+		pg_query($database, "DELETE FROM actions WHERE id_action IN (".implode(',',$dellist).");") or die();
+		pg_query($database, "UPDATE prodebians SET actionlist='".my_array2string($actionlist)."' WHERE id_prodebian=".$_SESSION['id_prodebian'].";") or die();
+		my_gotopage("actionlist.php");
+	}
 }
 
 //---------------------
@@ -95,8 +98,7 @@ You haven't added any action yet.<br />
 This means that your Prodebian has no more functionalities than the Debian base system.<br />
 ";
 } else {
-print '<form action="actionlist.php" method="POST">
-	<button name="delete" type="submit">remove</button><br />';
+print '<form action="actionlist.php" method="POST">';
 $i=0;
 foreach($actionlist as $action) {
 	$res = pg_query($database, "SELECT * FROM actions WHERE id_action='".$action."';") or die();
@@ -107,7 +109,7 @@ foreach($actionlist as $action) {
 	print '<a href="'.my_getactionurl($actions['actiontype']).'?id_action='.$actions['id_action'].'">';
 	print $actions['title'].'</a><br />';
 }
-print '</form>';
+print '<button name="delete" type="submit">remove selected actions</button></form>';
 }
 
 

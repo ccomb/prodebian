@@ -19,7 +19,7 @@ $found = array_search($_GET['id_action'], my_string2array($prodebians['actionlis
 if(is_bool($found) AND $found==FALSE) my_gotopage("error.php?why=badaction");
 //-------------------
 // GET THE PACKAGE LIST
-$res = pg_query($database, "SELECT actiontype,actionvalues FROM actions WHERE id_action='".$_GET['id_action']."';") or die();
+$res = pg_query($database, "SELECT title,actiontype,actionvalues FROM actions WHERE id_action='".$_GET['id_action']."';") or die();
 $actions = pg_fetch_array($res);
 if($actions['actiontype']!=1) my_gotopage("error.php");
 $packlist = my_string2array($actions['actionvalues']);
@@ -45,7 +45,6 @@ if(isset($_POST['addpackage']) AND $_POST['addpackage']!="") {
 //-------------------
 // REMOVE PACKAGE
 if(isset($_POST['delete'])) {
-	$length=count($packlist);
 	foreach($_POST as $key => $value) {
 		if(substr($key,0,4)=="pack") {
 			$delkey=array_search($value, $packlist);
@@ -56,7 +55,13 @@ if(isset($_POST['delete'])) {
 	pg_query($database, "UPDATE actions SET actionvalues='".my_array2string($packlist)."' WHERE id_action='".$_GET['id_action']."';") or die();
 	my_gotopage("packagelist.php?id_action=".$_GET['id_action']);
 }
-
+//-------------------
+// SAVE TITLE
+if(isset($_POST['title'])) {
+	my_authenticate($prodebians['id_owner']);
+	pg_query($database, "UPDATE actions SET title='".$_POST['title']."' WHERE id_action='".$_GET['id_action']."';") or die();
+	my_gotopage("packagelist.php?id_action=".$_GET['id_action']);
+}
 //---------------------
 // DISPLAY PACKAGE LIST
 my_beginpage();
@@ -64,31 +69,38 @@ my_printmenu();
 //---------------------
 // PROMPT TO ADD A NEW PACKAGE
 
-print '
-Name of the package to add: <form action="packagelist.php?id_action='.$_GET['id_action'].'" method="POST">
-<input type="text" name="addpackage" size="32" maxlength="32" />
-<button name="create" type="submit">add</button></form>
-Don\'t add too many packages in the same action. Create several actions with coherent groups of packages.<br /><br />
+print '<b>Title: '.$actions['title'].'</b><br />
+<form action="packagelist.php?id_action='.$_GET['id_action'].'" method="POST">
+<button type="submit">save</button>
+<input type="text" name="title" value="'.$actions['title'].'" size="64" maxlength="64" />(short descriptive title of this action)
+</form>
+
+<hr align="left" size="1" width="100%" />
+
+<b>Package list of this action :</b><br />
+(Don\'t add too many packages in the same action. Create several actions with coherent groups of packages.)<br />
+<form action="packagelist.php?id_action='.$_GET['id_action'].'" method="POST">
+<button type="submit">add</button>
+<input type="text" name="addpackage" size="32" maxlength="64" />(name of the package to add)
+</form>
 ';
 
 // SHOW THE LIST
-print '<b>Package list of this action :</b><br />';
+
 if(count($packlist)==0) {
 	print "
-(There is no package yet for this action).<br />
+(There is no packages yet for this action).<br />
 
 ";
 } else {
-	print '<form action="packagelist.php?id_action='.$_GET['id_action'].'" method="POST">
-	<button name="delete" type="submit">remove</button><br />';
+	print '<form action="packagelist.php?id_action='.$_GET['id_action'].'" method="POST">';
 	$i=0;
 	foreach($packlist as $id_package) {
 		$res = pg_query($database, "SELECT pack_name, id_pack FROM packages WHERE id_pack='".$id_package."';") or die();
 		$packages = pg_fetch_array($res);
-		print '<input type="checkbox" name="pack'.$i.'" value="'.$packages['id_pack'].'" />'.$packages['pack_name'].'<br />';
-		$i++;
+		print '<input type="checkbox" name="pack'.$i++.'" value="'.$packages['id_pack'].'" />'.$packages['pack_name'].'<br />';
 	}
-	print '</form>';
+	print '<button name="delete" type="submit">remove selected packages</button></form>';
 }
 
 

@@ -10,6 +10,7 @@ function my_beginpage() {
 	<head>
 		<title>Prodebian systems</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="generator" content="Bluefish 0.12 http://bluefish.openoffice.nl/" />
 	</head>
 <body>
 ';
@@ -18,6 +19,8 @@ function my_beginpage() {
 function my_printmenu() {
 	// HOME
 	print '<a href="index.php">home</a>';
+	// NEW
+	print ' | <a href="createprodebian.php">new</a> ';
 	// SEARCH
 	print ' | <a href="findprodebian.php">search</a> ';
 	// NEXT RESULT
@@ -35,7 +38,7 @@ function my_printmenu() {
 	if (isset($_GET['logout'])) { unset($_SESSION['username']); unset($_SESSION['password']); }
 	// LOGOUT
 	if (isset($_SESSION['username']) AND isset($_SESSION['password'])) {
-		// logout link only if logged in
+		// display logout link only if logged in
 		if($_SERVER['QUERY_STRING']=='') $and='';
 		else $and='&';
 		print ' | <a href="owner.php">'.$_SESSION['username'].'</a>';
@@ -46,7 +49,7 @@ function my_printmenu() {
 //--------------------------
 function my_endpage() {
 	// AJOUTER UN FORMULAIRE POUR ENVOYER UN COMMENTAIRE SUR LA PAGE
-	print '<hr size="1" width="100%" /><div style="text-align: right"><span style="font-size: smaller;">For bug reports, new features or any other comments, mail to <a href="mailto:ccomb@prodebian.org">ccomb</a></span></div></body></html>';
+	print '<hr size="1" width="100%" /><div style="text-align: right"><span style="font-size: smaller;">For new features, bug reports or any other comments, mail to <a href="mailto:ccomb@prodebian.org">ccomb</a></span></div></body></html>';
 }
 //--------------------------
 function my_gotopage($page) {
@@ -108,12 +111,12 @@ function my_authenticate($id_owner) {
 	print '
 	<form action="'.$_SERVER['REQUEST_URI'].'" method="POST">
 	<input type="hidden" name="username" value="'.$value.'" />
-	Password for user "'.$owners['username'].'": <input type="text" name="password" size="32" maxlength="32" /><br />
+	Password for user "'.$owners['username'].'": <input type="text" name="password" size="16" maxlength="16" />
 	<input type="hidden" name="username" value="'.$owners['username'].'" />
 	';
 	foreach($_POST as $key => $value) print '<input type="hidden" name="'.$key.'" value="'.$value.'" />';
 	print '
-	<button name="authenticate" type="submit">submit</button>
+	<button name="authenticate" type="submit">retry</button>
 	</form>
 	';
 	my_endpage();

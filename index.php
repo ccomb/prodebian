@@ -4,7 +4,11 @@ my_beginpage();
 print '<img src="prodebian.png" /><br />
 Prodebian<br />
 <br />
-Imagine you want to install <img src="debian-mini.png" /><a href="http://debian.org">Debian</a> for a client, for a friend, for your mother or just for a show.
+<div style="text-align: center">One can understand Prodebian with just one schema:<br />
+<img src="schema.png" alt="prodebian schema" /></div><br />
+
+
+Imagine you want to install <img src="debian-mini.png" /><a href="http://debian.org">Debian</a> for a customer, for a friend, for your mother or just for a show.
 So you want a particular set of packages, with a particular configuration,
 a customized desktop with predefined icons and predefined shortcuts in mozilla.
 Maybe you want to set-up a small ready-to-use proxy server.
