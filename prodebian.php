@@ -17,13 +17,13 @@ print "Prodebian n°".$prodebian['id_prodebian']."<br />";
 print "Version de Debian : ".$debversion['version_name']."<br />";
 
 $packlist = $prodebian['id_packlist'];
-if($packlist==NULL) $pack_number=0;
+if($packlist=='{}') $pack_number=0;
 else {
-	$res = pg_query($database, "SELECT * FROM package_lists WHERE id_packlist='".$packlist."';");
-	$packagelist = pg_fetch_array($res);
-	$pack_number = 0;
+	$res = pg_query($database, "SELECT * FROM package_lists WHERE id_packlist=".$packlist.";");
+	$package_lists = pg_fetch_array($res);
+	$pack_number = count(string2array($package_lists['packlist']));
 }
-print "<br />liste des paquets : <a href=packagelist.php>".$pack_number." paquets</a><br />";
+print "<br />liste des paquets : <a href=packagelist.php>".$pack_number." paquet(s)</a><br />";
 print "liste des actions : "."TBD<br />";
 
 

@@ -10,10 +10,11 @@ if(!isset($_SESSION['id_prodebian'])) goto_page("findprodebian.php");
 //-------------------
 // GET THE PACKAGE ID LIST
 $res = pg_query($database, "SELECT id_packlist FROM prodebians WHERE id_prodebian=".$_SESSION['id_prodebian'].";");
-$prodebian = pg_fetch_result($res,0,0);
+$prodebian = pg_fetch_array($res);
 $res = pg_query($database, "SELECT packlist FROM package_lists WHERE id_packlist=".$prodebian['id_packlist'].";");
-$packlist = pg_fetch_result($res,0,0);
-if($packlist=='{}') $packlist=array(NULL);
+$package_lists = pg_fetch_array($res);
+$packlist = $package_lists['packlist'];
+if($packlist=='{}') $packlist=array();
 else $packlist = string2array($packlist);
 
 // ADD PACKAGE IF ASKED
@@ -28,10 +29,8 @@ if(isset($_POST['addpackage'])) {
 		$res = pg_query($database, "SELECT id_pack FROM packages WHERE oid=".$last_oid.";");
 		$packages = pg_fetch_array($res);
 	}
-	print_r( $packages);
-	print_r ($packlist);
-	$packlist = array_push($packlist, string($packages['id_pack']));
-	$res = pg_query($database, "INSERT INTO package_lists (packlist) VALUES ('".array2string($packlist)."');");
+	array_push($packlist, $packages['id_pack']);
+	$res = pg_query($database, "UPDATE package_lists SET packlist='".array2string($packlist)."';");
 }
 
 //---------------------
@@ -44,11 +43,12 @@ You haven't added any package yet.<br />
 This means that your Prodebian has no more functionalities than the Debian base system.<br />
 ";
 } else {
+
 print '<form action="packagelist.php" method="POST">';
 foreach($packlist as $id_package) {
 	$res = pg_query($database, "SELECT pack_name FROM packages WHERE id_pack=".$id_package.";");
-	$pack_name = pg_fetch_result($res,0,0);
-	print '<input type="checkbox" name="$pack_name" />';
+	$packages = pg_fetch_array($res);
+	print '<input type="checkbox" name="'.$packages['pack_name'].'" />'.$packages['pack_name'].'<br />';
 }
 print '</form><br />';
 }
