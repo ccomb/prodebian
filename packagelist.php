@@ -68,11 +68,14 @@ my_beginpage();
 my_printmenu();
 //---------------------
 // PROMPT TO ADD A NEW PACKAGE
-if($actions['title']=="") $actions['title']="(enter a short descriptive title for this action)";
+if($actions['title']=="") {
+  $actions['title']="(enter a short descriptive title for this action)";
+  $onfocus='onFocus="this.value=&quot;&quot;"';
+}
 print '<b>Title: '.$actions['title'].'</b><br />
 <form action="packagelist.php?id_action='.$_GET['id_action'].'" method="POST">
 <button type="submit">save</button>
-<input type="text" name="title" value="'.$actions['title'].'" size="64" maxlength="64" />
+<input type="text" name="title" value="'.$actions['title'].'" '.$onfocus.' size="64" maxlength="64" />
 </form>
 
 <hr align="left" size="1" width="100%" />

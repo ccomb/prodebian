@@ -5,7 +5,7 @@ print "GET=";print_r($_GET);print "<br />POST=";print_r($_POST);print "<br />SES
 }
 //--------------------------
 function my_beginpage() {
-	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+	print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
 <html>
 	<head>
 		<title>Prodebian systems</title>
@@ -75,10 +75,10 @@ function my_string2array($string) {
 // REMOVE HTML AND PHP TAGS, LIMIT THE LENGTH OF THE VARIABLES, AND REMOVE DANGEROUS CHARS.
 function my_purge_data() {
 	$from=array("'", "\"");
-	$to=array("X", "\\\"");
+	$to=array("X", "X");
 	foreach($_POST as $key => $value) {
 		// this purges the value but not the key!
-		if($key=="desc" OR $key="runscript") $_POST[$key]=substr(str_replace($from, $to, strip_tags($value,'<a><b><i><u>')),0,900);
+		if($key=="desc" OR $key=="runscript") $_POST[$key]=substr(str_replace($from, $to, strip_tags($value,'<a><b><i><u>')),0,900);
 		else $_POST[$key]=substr(str_replace($from, $to, strip_tags($value)),0,64);
 	}
 	foreach($_GET as $key => $value) {

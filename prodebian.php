@@ -33,7 +33,7 @@ if(isset($prodebians['id_owner'])) {
 	$res = pg_query($database, "SELECT id_owner,username FROM owners WHERE id_owner='".$prodebians['id_owner']."';") or die();
 	$owners = pg_fetch_array($res);
 } else { 
-	$owners['username']="(click to appropriate)";
+	$owners['username']="(click to own)";
 	$owners['id_owner']=0;
 }
 
@@ -42,20 +42,20 @@ if(isset($prodebians['id_owner'])) {
 my_beginpage();
 my_printmenu();
 
-print "<b>Prodebian #".$prodebians['id_prodebian']."</b><br />";
-print '<hr align="left" size="2" width="50%" />';
+print "<b>Prodebian #".$prodebians['id_prodebian']."</b><br /><br />";
+
 print "<a href=description.php>Title and description</a> : <b>".$prodebians['title']."</b><br />";
 print $prodebians['description'];
 print '<hr align="left" size="2" width="50%" />';
 print "Based on Debian version : ".my_debianversion($prodebians['debversion'])."<br />";
 print "list of actions: <a href=actionlist.php>".$action_number." action(s)</a><br />";
 print 'owner: <a href="owner.php?id='.$owners['id_owner'].'">'.$owners['username'].'</a><br />';
-print "dedicated to a particular hardware : "."yes or no TBD<br />";
-print "dedicated to a particular job : TBD<br />";
-print "user experience : "."TBD<br />";
-print "architecture : "."TBD<br />";
+//print "dedicated to a particular hardware : "."yes or no TBD<br />";
+//print "dedicated to a particular job : TBD<br />";
+//print "user experience : "."TBD<br />";
+//print "architecture : "."TBD<br />";
 //print "mailing list for this prodebian : "."yes or no TBD<br />";
-print "language of users<br />";
+//print "language of users<br />";
 
 
 print '

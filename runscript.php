@@ -18,18 +18,9 @@ $prodebians = pg_fetch_array($res);
 $found = array_search($_GET['id_action'], my_string2array($prodebians['actionlist']));
 if(is_bool($found) AND $found==FALSE) my_gotopage("error.php?why=badaction");
 
-//-------------------
-// GET THE COMMAND
-$res = pg_query($database, "SELECT title,actiontype,actionvalues FROM actions WHERE id_action='".$_GET['id_action']."';") or die();
-$actions = pg_fetch_array($res);
-if($actions['actiontype']!=4) my_gotopage("error.php?why=badtype");
-$script = my_string2array($actions['actionvalues']);
-//$script=substr($script['0'],1,strlen($script['0'])-2);
-$script = $script['0'];
-//-------------------
 // SAVE THE SCRIPT
 if(isset($_POST['runscript'])) {
-	$script=array('"'.$_POST['runscript'].'"');
+	$script=array($_POST['runscript']);
 	my_authenticate($prodebians['id_owner']);
 	pg_query($database, "UPDATE actions SET actionvalues='".my_array2string($script)."' WHERE id_action='".$_GET['id_action']."';") or die();
 	my_gotopage("runscript.php?id_action=".$_GET['id_action']);
@@ -41,16 +32,32 @@ if(isset($_POST['title'])) {
 	pg_query($database, "UPDATE actions SET title='".$_POST['title']."' WHERE id_action='".$_GET['id_action']."';") or die();
 	my_gotopage("runscript.php?id_action=".$_GET['id_action']);
 }
+//-------------------
+// GET THE SCRIPT
+$res = pg_query($database, "SELECT title,actiontype,actionvalues FROM actions WHERE id_action='".$_GET['id_action']."';") or die();
+$actions = pg_fetch_array($res);
+if($actions['actiontype']!=4) my_gotopage("error.php?why=badtype");
+$script = my_string2array($actions['actionvalues']);
+//$script=substr($script['0'],1,strlen($script['0'])-2);
+$script = $script['0'];
+//-------------------
+
 
 my_beginpage();
 my_printmenu();
 
-if($actions['title']=="") $actions['title']="(enter a short descriptive title for this action)";
-if($script=="") $script="(enter a small shell script to run)";
+if($actions['title']=="") {
+  $actions['title']="(enter a short descriptive title for this action)";
+  $onfocustitle='onFocus="this.value=&quot;&quot;"';
+}
+if($script=="") {
+  $script="(enter a small shell script to run)";
+  $onfocuscript='onFocus="this.content=&quot;&quot;"';
+ }
 print '<b>Title: '.$actions['title'].'</b><br />
 <form action="runscript.php?id_action='.$_GET['id_action'].'" method="POST">
 <button type="submit">save</button>
-<input type="text" name="title" value="'.$actions['title'].'" size="64" maxlength="64" />
+<input type="text" name="title" value="'.$actions['title'].'" size="64" maxlength="64" '.$onfocustitle.' />
 </form>
 
 <hr align="left" size="1" width="100%" />
