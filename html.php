@@ -1,20 +1,18 @@
 <?php
 
 function beginpage() {
-	print '
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 	<head>
 		<title>Prodebian systems</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	</head>
 <body>
-collaborative management of Prodebian systems (revision 1)<br />
 ';
 }
 
 function print_menu() {
-	print '<a href="index.php">accueil</a> <a href="findprodebian.php">recherche</a><br />';
+	print '<a href="index.php">home</a> <a href="findprodebian.php">find</a> ';
 	if (isset($_SESSION['id_prodebian'])) print '<a href="prodebian.php?id='.$_SESSION['id_prodebian'].'">back to prodebian #'.$_SESSION['id_prodebian'].'</a><br />';
 	print "<br />";
 }
@@ -48,7 +46,8 @@ function string2array($string) {
 function purge_data() {
 	foreach($_POST as $key => $value) {
 		// this purges the value but not the key!
-		$_POST[$key]=substr(strip_tags($value),0,32);
+		if($key=="desc") $_POST[$key]=substr(strip_tags($value),0,300);
+		else $_POST[$key]=substr(strip_tags($value),0,32);
 	}
 	foreach($_GET as $key => $value) {
 		// this purges the value but not the key!

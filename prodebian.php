@@ -28,51 +28,37 @@ else {
 	$package_lists = pg_fetch_array($res);
 	$pack_number = count(string2array($package_lists['packlist']));
 }
+if(isset($prodebian['id_desc'])) {
+	$res = pg_query($database, "SELECT description FROM descriptions WHERE id_desc='".$prodebian['id_desc']."';");
+	$descriptions = pg_fetch_array($res);
+} else $descriptions['description']="No description. Please add one.";
 
 
-//-------------------
-// DOWNLOAD THE INSTALL SCRIPT
-if(isset($_POST['dlscript'])) {
-	//header("Content-type: application/sh");
-	header("Content-Disposition: attachment; filename=prodebian".$_SESSION['id_prodebian']."_install_script.sh");
-	print '#!/bin/bash
-apt-get install ';
-	foreach(string2array($package_lists['packlist']) as $id_package) {
-		$res = pg_query($database, "SELECT pack_name FROM packages WHERE id_pack=".$id_package.";");
-		$packages = pg_fetch_array($res);
-		print $packages['pack_name']." ";
-	}
-	exit();
-}
-//-------------------
-// DOWNLOAD THE INSTALL GUIDE
-if(isset($_POST['dldoc'])) {
-	//header("Content-type: text/txt");
-	header("Content-Disposition: attachment; filename=prodebian".$_SESSION['id_prodebian']."_install_guide.txt");
-	print 'Prodebian blah blah blah
-- boot from the Debian netinst CDROM
-- install...
-- login as root
-- run script.sh
-- enjoy the prodebian
-';
-exit();
-}
 //-------------------
 // DISPLAY THE PRODEBIAN SUMMARY
 beginpage();
 print_menu();
 
-print "<b>".$prodebian['name']."</b><br />";
-print "Prodebian n°".$prodebian['id_prodebian']."<br />";
-print "Version de Debian : ".$debversion['version_name']."<br />";
+print "<b>Prodebian #".$prodebian['id_prodebian']."</b><br />";
+print '<hr align="left" size="2" width="50%" />';
+print "<a href=description.php>Title and description</a> : <b>".$prodebian['name']."</b><br />";
+print $descriptions['description'];
+print '<hr align="left" size="2" width="50%" />';
+print "Based on Debian version : ".$debversion['version_name']."<br />";
+print "packages : <a href=packagelist.php>".$pack_number." package(s)</a><br />";
+print "postinstall actions : "."TBD<br />";
+print "dedicated to a particular hardware : "."yes or no TBD<br />";
+print "dedicated to a particular job : TBD<br />";
+print "user experience : "."TBD<br />";
+print "access protected : "."yes or no TBD<br />";
+print "architecture : "."TBD<br />";
+//print "mailing list for this prodebian : "."yes or no TBD<br />";
+print "language of users<br />";
+print "owner";
 
-
-print "<br />liste des paquets : <a href=packagelist.php>".$pack_number." paquet(s)</a><br />";
-print "liste des actions : "."TBD<br />";
 print '
 <form action="generateprodebian.php" method="GET">
-	<button name="id" value="'.$prodebian['id_prodebian'].'" type="submit">générer</button>
+	<button name="id" value="'.$prodebian['id_prodebian'].'" type="submit">generate</button>
 </form>
 <form action="deleteprodebian.php" method="POST">
 	<button name="delete" type="submit">delete</button>

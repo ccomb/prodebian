@@ -18,28 +18,28 @@ print_menu();
 
 print '
 <form action="findprodebian.php" method="POST">
-	<button name="namecontains" value="" type="submit">afficher toutes les Prodebian</button>
+	<button name="namecontains" value="" type="submit">Display all Prodebian</button>
 </form>
 ';
-print '<b>Chercher une Prodebian</b><br />';
+print '<b>Search a Prodebian</b><br />';
 print '<form action="prodebian.php" method="GET">
-	par son numéro de référence : 
+	by its reference number : 
 	<input type="text" name="id" size="5" maxlength="5" />
-	<button name="find" type="submit">chercher</button>
+	<button name="find" type="submit">search</button>
 </form>
 ';
-print '
+/*print '
 <form action="findprodebian.php" method="POST">
-	Son nom est : 
+	Its title is : 
 	<input type="text" name="nameis" size="10" maxlength="10" />
 	<button name="find" type="submit">chercher</button>
 </form>
-';
+';*/
 print '
 <form action="findprodebian.php" method="POST">
-	Son nom contient : 
+	Its title contains : 
 	<input type="text" name="namecontains" size="10" maxlength="10" />
-	<button name="find" type="submit">chercher</button>
+	<button name="find" type="submit">search</button>
 </form>
 ';
 //-------------------
@@ -47,7 +47,7 @@ print '
 
 print '
 <hr align="left" size="2" width="100%" />
-<b>Résultat de recherche :</b><br />
+<b>Search results:</b><br />
 ';
 
 if(isset($_POST['namecontains'])) {

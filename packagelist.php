@@ -50,7 +50,7 @@ if(isset($_POST['delete'])) {
 // DISPLAY PACKAGE LIST
 beginpage();
 print_menu();
-print '<b>Liste des paquets de cette Prodebian :</b><br />';
+print '<b>Package list of this Prodebian :</b><br />';
 if(count($packlist)==0) {
 	print "
 You haven't added any package yet.<br />
@@ -66,16 +66,16 @@ foreach($packlist as $id_package) {
 	print '<input type="checkbox" name="pack'.$i.'" value="'.$packages['id_pack'].'" />'.$packages['pack_name'].'<br />';
 	$i++;
 }
-print '<button name="delete" type="submit">effacer</button></form><br />';
+print '<button name="delete" type="submit">delete</button></form><br />';
 }
 
 //---------------------
 // PROMPT TO ADD A NEW PACKAGE
 print '<hr align="left" size="2" width="50" />';
 print '
-Nom du paquet à ajouter : <form action="packagelist.php" method="POST">
+Name of package to add : <form action="packagelist.php" method="POST">
 <input type="text" name="addpackage" size="32" maxlength="32" />
-<button name="create" type="submit">ajouter</button></form><br />
+<button name="create" type="submit">add</button></form><br />
 ';
 
 

@@ -43,22 +43,19 @@ else {
 
 	print '<br />
 	<form action="createprodebian.php" method="POST">
-		version de Debian :	<select name="debianversion" size="1">';
+		based on Debian version :	<select name="debianversion" size="1">';
 		for($row=0; $row < pg_num_rows($res_debversions); $row++) {
 			$debversions = pg_fetch_array($res_debversions, $row);
 			if ($debversions['version_nb']=='3.1') $selected='selected';
 			else $selected="";
 			print "<option value=\"".$debversions['version_nb']."\" $selected>".$debversions['version_name']."</option>";
 		}
-
+	print '</select><br />';
 	print '
-		</select><br />
-		Choisissez un nom pour votre prodebian.<br />
-		Ce nom n\'a pas de garantie d\'unicité et pourra être modifié.<br />
-		Nom de votre prodebian : <input type="text" name="prodebname" size="32" maxlength="32" /><br />
-		<button name="create" type="submit">créer</button>
+		Choose a short descriptive title for your Prodebian.<br />
+		Prodebian title: <input type="text" name="prodebname" size="32" maxlength="32" /><br />
+		<button name="create" type="submit">create</button>
 	</form>';
-
 	endpage();
 }
 ?>

@@ -31,6 +31,8 @@ if($_POST['confirm']=="yes") {
 	$database = connect_database();
 	$res = pg_query($database, "DELETE FROM package_lists WHERE id_packlist=(SELECT id_packlist FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."');");
 	if(!$res) goto_page("error.php?why=deleteerror");
+	$res = pg_query($database, "DELETE FROM descriptions WHERE id_desc=(SELECT id_desc FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."');");
+	if(!$res) goto_page("error.php?why=deleteerror");
 	$res = pg_query($database, "DELETE FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';");
 	if(!$res) goto_page("error.php?why=deleteerror");
 	$id_prodebian=$_SESSION['id_prodebian'];
