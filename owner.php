@@ -31,24 +31,13 @@ if(isset($_GET['id']) AND (int)$_GET['id']!=0) {
 	$owners = pg_fetch_array($res);
 	if($owners['id_desc']=='') $owners['id_desc']=0;
 	if($owners['email']=='') $owners['email']='none';
-	$res = pg_query($database, "SELECT description FROM descriptions WHERE id_desc='".$owners['id_desc']."';") or die();
-	$descriptions = pg_fetch_array($res);
-	if($descriptions['description']=='') $descriptions['description']='(no comment)';
-	$resprodebians = pg_query($database, "SELECT id_prodebian,name FROM prodebians WHERE id_owner='".$owners['id_owner']."';") or die();
+	if($owners['description']=='') $owners['description']='(no comment)';
+	$resprodebians = pg_query($database, "SELECT id_prodebian,title FROM prodebians WHERE id_owner='".$owners['id_owner']."';") or die();
 	//$prodebians = pg_fetch_array($res);// USE IT TO SHOW THE PRODEBIAN LIST !!!!!!!!!!!!!!!!!!!!!
 	// UPDATE DATA
 	if(isset($_POST['update'])) {
 		my_authenticate($_GET['id']);
-		if($owners['id_desc']=='') {
-			$res = pg_query($database, "INSERT INTO descriptions (description) VALUES ('".$_POST['desc']."');") or die();
-			$last_oid = pg_last_oid($res);
-			$res = pg_query($database, "SELECT id_desc FROM descriptions WHERE oid='".$last_oid."';") or die();
-			$descriptions = pg_fetch_array($res);
-			$res = pg_query($database, "UPDATE owners SET id_desc='".$descriptions['id_desc']."' WHERE id_owner='".$_GET['id']."';") or die();
-		} else {
-			$res = pg_query($database, "UPDATE descriptions SET description='".$_POST['desc']."' WHERE id_desc='".$owners['id_desc']."';") or die();
-		}
-		$res = pg_query($database, "UPDATE owners SET email='".$_POST['email']."' WHERE id_owner='".$_GET['id']."';") or die();
+		$res = pg_query($database, "UPDATE owners SET description='".$_POST['desc']."', email='".$_POST['email']."' WHERE id_owner='".$_GET['id']."';") or die();
 		if($_POST['password']!='') { 
 			$res = pg_query($database, "UPDATE owners SET password='".$_POST['password']."' WHERE id_owner='".$_GET['id']."';") or die();
 			$_SESSION['password']=$_POST['password'];
@@ -62,7 +51,7 @@ if(isset($_GET['id']) AND (int)$_GET['id']!=0) {
 		print 'Prodebian owner: '.$owners['username'].'<br />';
 		print 'password: <a href="owner.php?id='.$owners['id_owner'].'&modify=1">(modify)</a><br />';
 		print 'e-mail: <a href="owner.php?id='.$owners['id_owner'].'&modify=1">(modify)</a><br /><br />';
-		print 'owners\'s comments or details:<br />'.$descriptions['description'];
+		print 'owners\'s comments or details:<br />'.$owners['description'];
 		my_endpage();
 		exit();
 	}
@@ -75,7 +64,7 @@ if(isset($_GET['id']) AND (int)$_GET['id']!=0) {
 	your username: '.$owners['username'].'<br />
 	your password: <input type="text" name="password" size="16" maxlength="16" />(leave blank to keep)<br />
 	your e-mail: <input type="text" name="email" value="'.$owners['email'].'" size="32" maxlength="64" /><br />
-	Your comments or details: (Limited to 900 chars)<br /><textarea name="desc" rows="15" cols="60">'.$descriptions['description'].'</textarea><br />
+	Your comments or details: (Limited to 900 chars)<br /><textarea name="desc" rows="15" cols="60">'.$owners['description'].'</textarea><br />
 	<button name="update" type="submit">save</button>
 	</form>
 	';
@@ -88,7 +77,7 @@ if(isset($_GET['id']) AND (int)$_GET['id']!=0) {
 //-------------------
 // if we provided user/pass and the prodebian has no user,
 // CREATE USER IF NECESSARY, THEN CREATE TOKEN, AND GIVE HIM THE PRODEBIAN
-$res = pg_query($database, "SELECT id_owner,name FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
+$res = pg_query($database, "SELECT id_owner,title FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
 $prodebians = pg_fetch_array($res);
 if(isset($_POST['username']) AND isset($_POST['password']) AND (int)$prodebians['id_owner']==0) {
 	$res = pg_query($database, "SELECT * FROM owners WHERE username='".$_POST['username']."';") or die();

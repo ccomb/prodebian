@@ -4,19 +4,21 @@ session_start();
 include 'my_functions.php';
 my_purge_data();
 
+//my_debug();
+
+//check arguments
+if(!isset($_GET['id_action'])) my_gotopage("findprodebian.php");
+
 $database = my_connectdatabase();
 if(!isset($_SESSION['id_prodebian'])) my_gotopage("findprodebian.php");
 
 //-------------------
-// GET THE PACKAGE ID LIST
-$res = pg_query($database, "SELECT id_packlist FROM prodebians WHERE id_prodebian=".$_SESSION['id_prodebian'].";") or die();
-$prodebian = pg_fetch_array($res);
-$res = pg_query($database, "SELECT packlist FROM package_lists WHERE id_packlist=".$prodebian['id_packlist'].";") or die();
-$package_lists = pg_fetch_array($res);
-$packlist = $package_lists['packlist'];
-if($packlist=='{}') $packlist=array();
-else $packlist = my_string2array($packlist);
-
+// GET THE PACKAGE LIST
+$res = pg_query($database, "SELECT actiontype,actionvalues FROM actions WHERE id_action='".$_GET['id_action']."';") or die();
+$actions = pg_fetch_array($res);
+if($actions['actiontype']!=1) my_gotopage("error.php");
+$packlist = my_string2array($actions['actionvalues']);
+//-------------------
 // ADD PACKAGE IF ASKED
 if(isset($_POST['addpackage']) AND $_POST['addpackage']!="") {
 	// try to find the package
@@ -31,7 +33,8 @@ if(isset($_POST['addpackage']) AND $_POST['addpackage']!="") {
 	}
 	$found=array_search($packages['id_pack'],$packlist);
 	if(is_bool($found) AND $found==FALSE) array_push($packlist, $packages['id_pack']);
-	pg_query($database, "UPDATE package_lists SET packlist='".my_array2string($packlist)."'WHERE id_packlist='".$prodebian['id_packlist']."';") or die();
+	my_authenticate(
+	pg_query($database, "UPDATE actions SET actionvalues='".my_array2string($packlist)."' WHERE id_action='".$_GET['id_action']."';") or die();
 }
 
 // REMOVE PACKAGE
@@ -43,7 +46,7 @@ if(isset($_POST['delete'])) {
 			unset($packlist[$delkey]);
 		}
 	}
-	pg_query($database, "UPDATE package_lists SET packlist='".my_array2string($packlist)."' WHERE id_packlist='".$prodebian['id_packlist']."';") or die();
+	pg_query($database, "UPDATE actions SET actionvalues='".my_array2string($packlist)."' WHERE id_action='".$_GET['id_action']."';") or die();
 }
 
 //---------------------
@@ -54,29 +57,30 @@ my_printmenu();
 // PROMPT TO ADD A NEW PACKAGE
 
 print '
-Name of package to add : <form action="packagelist.php" method="POST">
+Name of package to add : <form action="packagelist.php?id_action='.$_GET['id_action'].'" method="POST">
 <input type="text" name="addpackage" size="32" maxlength="32" />
-<button name="create" type="submit">add</button></form><br />
+<button name="create" type="submit">add</button></form>
+Don\'t add too many packages in the same action. Create several actions with coherent groups of packages.<br /><br />actions
 ';
-print '<hr align="left" size="2" width="50" />';
+
 // SHOW THE LIST
-print '<b>Package list of this Prodebian :</b><br />';
+print '<b>Package list of this action :</b><br />';
 if(count($packlist)==0) {
 	print "
-You haven't added any package yet.<br />
-This means that your Prodebian has no more functionalities than the Debian base system.<br />
+(There is no package yet for this action).<br />
+
 ";
 } else {
-
-print '<form action="packagelist.php" method="POST">';
-$i=0;
-foreach($packlist as $id_package) {
-	$res = pg_query($database, "SELECT pack_name, id_pack FROM packages WHERE id_pack=".$id_package.";") or die();
-	$packages = pg_fetch_array($res);
-	print '<input type="checkbox" name="pack'.$i.'" value="'.$packages['id_pack'].'" />'.$packages['pack_name'].'<br />';
-	$i++;
-}
-print '<button name="delete" type="submit">remove</button></form>';
+	print '<form action="packagelist.php?id_action='.$_GET['id_action'].'" method="POST">
+	<button name="delete" type="submit">remove</button><br />';
+	$i=0;
+	foreach($packlist as $id_package) {
+		$res = pg_query($database, "SELECT pack_name, id_pack FROM packages WHERE id_pack='".$id_package."';") or die();
+		$packages = pg_fetch_array($res);
+		print '<input type="checkbox" name="pack'.$i.'" value="'.$packages['id_pack'].'" />'.$packages['pack_name'].'<br />';
+		$i++;
+	}
+	print '</form>';
 }
 
 print '<hr align="left" size="2" width="50" />';

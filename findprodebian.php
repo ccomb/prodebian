@@ -3,15 +3,15 @@ session_start();
 include 'my_functions.php';
 my_purge_data();
 
-// search by name
-if(isset($_POST['namecontains'])) {
+// search by title
+if(isset($_POST['titlecontains'])) {
 	$_SESSION['searchresult'] = array();
-	$_SESSION['searchresult']['namecontains'] = $_POST['namecontains'];
+	$_SESSION['searchresult']['titlecontains'] = $_POST['titlecontains'];
 	$database = my_connectdatabase();
 	$from=array("*", "\\", "_", "%", "|", "+", "?", "^", "(", ")", "[", "]", "'", "\"");
 	$to=array("\\\*", "\\\\", "\\\_", "\\\%", "\\\|", "\\\+", "\\\?", "\\\^", "\\\(", "\\\)", "\\\[", "\\\]", "", "");
-	$_POST['namecontains']=str_replace($from, $to, $_POST['namecontains']);
-	$result = pg_query($database, "SELECT id_prodebian, name FROM prodebians WHERE name SIMILAR TO '%".$_POST['namecontains']."%';") or die();
+	$_POST['titlecontains']=str_replace($from, $to, $_POST['titlecontains']);
+	$result = pg_query($database, "SELECT id_prodebian, title FROM prodebians WHERE title SIMILAR TO '%".$_POST['titlecontains']."%';") or die();
 }
 
 // store the result in SESSION
@@ -19,16 +19,16 @@ if(isset($result)) {
 	$howmany=pg_num_rows($result);
 	for($row=0; $row<$howmany; $row++) {
 		$prodebian = pg_fetch_array($result, $row);
-		$_SESSION['searchresult'][$prodebian['id_prodebian']]=$prodebian['name'];
+		$_SESSION['searchresult'][$prodebian['id_prodebian']]=$prodebian['title'];
 	}
 	// don't display now, just reload the find page so that there is no POST data. (can click back without resubmit)
 	my_gotopage("findprodebian.php");
 }
 
 /*
-if(isset($_POST['nameis'])) {
+if(isset($_POST['titleis'])) {
 	$database = my_connectdatabase();
-	$res = pg_query($database, "SELECT id_prodebian FROM prodebians WHERE name='".$_POST['nameis']."';");
+	$res = pg_query($database, "SELECT id_prodebian FROM prodebians WHERE title='".$_POST['titleis']."';");
 	$prodebian = pg_fetch_array($res);
 	my_gotopage("prodebian.php?id=".$prodebian['id_prodebian']);
 }
@@ -40,7 +40,7 @@ my_printmenu();
 
 print '
 <form action="findprodebian.php" method="POST">
-	<button name="namecontains" value="" type="submit">Display all Prodebian</button>
+	<button name="titlecontains" value="" type="submit">Display all Prodebian</button>
 </form>
 ';
 print '<b>Search a Prodebian</b><br />';
@@ -53,14 +53,14 @@ print '<form action="prodebian.php" method="GET">
 /*print '
 <form action="findprodebian.php" method="POST">
 	Its title is : 
-	<input type="text" name="nameis" size="10" maxlength="10" />
+	<input type="text" name="titleis" size="10" maxlength="10" />
 	<button name="find" type="submit">chercher</button>
 </form>
 ';*/
 print '
 <form action="findprodebian.php" method="POST">
 	Its title contains : 
-	<input type="text" name="namecontains" value="'.$_SESSION['searchresult']['namecontains'].'" size="10" maxlength="10" />
+	<input type="text" name="titlecontains" value="'.$_SESSION['searchresult']['titlecontains'].'" size="10" maxlength="10" />
 	<button name="find" type="submit">search</button>
 </form>
 ';

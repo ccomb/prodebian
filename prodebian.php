@@ -17,27 +17,21 @@ if(!isset($_SESSION['id_prodebian'])) my_gotopage("findprodebian.php");
 // GET PRODEBIAN DATA
 $database = my_connectdatabase();
 $res = pg_query($database, "SELECT * FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
-$prodebian = pg_fetch_array($res);
-if($prodebian==0) my_gotopage("error.php?why=invalidprodebian");
-// debian version
-$res = pg_query($database, "SELECT * FROM debversions WHERE id_debversion=".$prodebian['id_debversion'].";") or die();
-$debversion = pg_fetch_array($res);
+$prodebians = pg_fetch_array($res);
+if($prodebians==0) my_gotopage("error.php?why=invalidprodebian");
 // package list
-$id_packlist = $prodebian['id_packlist'];
-if($id_packlist=='{}') $pack_number=0;
-else {
-	$res = pg_query($database, "SELECT * FROM package_lists WHERE id_packlist=".$id_packlist.";") or die();
-	$package_lists = pg_fetch_array($res);
-	$pack_number = count(my_string2array($package_lists['packlist']));
-}
+$actionlist = $prodebians['actionlist'];
+if($actionlist=='{}') $action_number=0;
+else $action_number = count(my_string2array($actionlist));
+
 // description
-if(isset($prodebian['id_desc'])) {
-	$res = pg_query($database, "SELECT description FROM descriptions WHERE id_desc='".$prodebian['id_desc']."';") or die();
+if(isset($prodebians['id_desc'])) {
+	$res = pg_query($database, "SELECT description FROM descriptions WHERE id_desc='".$prodebians['id_desc']."';") or die();
 	$descriptions = pg_fetch_array($res);
 } else $descriptions['description']="No description. Please add one.";
 // owner
-if(isset($prodebian['id_owner'])) {
-	$res = pg_query($database, "SELECT id_owner,username FROM owners WHERE id_owner='".$prodebian['id_owner']."';") or die();
+if(isset($prodebians['id_owner'])) {
+	$res = pg_query($database, "SELECT id_owner,username FROM owners WHERE id_owner='".$prodebians['id_owner']."';") or die();
 	$owners = pg_fetch_array($res);
 } else { 
 	$owners['username']="(click to appropriate)";
@@ -49,14 +43,13 @@ if(isset($prodebian['id_owner'])) {
 my_beginpage();
 my_printmenu();
 
-print "<b>Prodebian #".$prodebian['id_prodebian']."</b><br />";
+print "<b>Prodebian #".$prodebians['id_prodebian']."</b><br />";
 print '<hr align="left" size="2" width="50%" />';
-print "<a href=description.php>Title and description</a> : <b>".$prodebian['name']."</b><br />";
-print $descriptions['description'];
+print "<a href=description.php>Title and description</a> : <b>".$prodebians['title']."</b><br />";
+print $prodebians['description'];
 print '<hr align="left" size="2" width="50%" />';
-print "Based on Debian version : ".$debversion['version_name']."<br />";
-print "packages : <a href=packagelist.php>".$pack_number." package(s)</a><br />";
-print "postinstall actions: "."TBD<br />";
+print "Based on Debian version : ".my_debianversion($prodebians['debversion'])."<br />";
+print "list of actions: <a href=actionlist.php>".$action_number." action(s)</a><br />";
 print 'owner: <a href="owner.php?id='.$owners['id_owner'].'">'.$owners['username'].'</a><br />';
 print "dedicated to a particular hardware : "."yes or no TBD<br />";
 print "dedicated to a particular job : TBD<br />";
@@ -68,7 +61,7 @@ print "language of users<br />";
 
 print '
 <form action="generateprodebian.php" method="GET">
-	<button name="id" value="'.$prodebian['id_prodebian'].'" type="submit">generate</button>
+	<button name="id" value="'.$prodebians['id_prodebian'].'" type="submit">generate</button>
 </form>
 <form action="deleteprodebian.php" method="POST">
 	<button name="delete" type="submit">delete</button>

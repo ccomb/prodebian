@@ -5,73 +5,36 @@
 
 CREATE TABLE prodebians (
  id_prodebian   serial PRIMARY KEY,
- name           varchar(32),
- id_debversion	integer,
+ title          varchar(64),
+ debversion     real,
  version        integer,
  property       bit varying(4),
  id_owner       integer,
- id_desc        integer,
- id_actionlist  integer,
- id_packlist integer
+ description    text,
+ actionlist     integer[]
 );
-//property = private/public, ...
-
 
 CREATE TABLE owners (
  id_owner       serial PRIMARY KEY,
  username       varchar(64) UNIQUE,
  email          varchar(64),
  password       varchar(64),
- id_desc        integer
-);
-
-CREATE TABLE debversions (
- id_debversion  serial PRIMARY KEY,
- id_desc        integer,
- version_name   
- version_nb     varchar(64)
-);
-
-CREATE TABLE descriptions (
- id_desc     serial  PRIMARY KEY,
  description text
-);
-
-CREATE TABLE languages (
- language_code varchar(32) UNIQUE,
- language_name varchar(32) UNIQUE
-);
-
-CREATE TABLE actionlists (
- id_actionlist serial PRIMARY KEY,
- id_desc  integer,
- actionlist integer[]
 );
 
 CREATE TABLE actions (
  id_action      serial PRIMARY KEY,
- id_actiontype  integer,
- id_desc        integer,
- id_actiongroup integer,
+ title          varchar(64),
+ actiontype  integer,
+ description text,
  actionvalues   text[]
-);
-
-CREATE TABLE actiontypes (
- id_actiontype serial PRIMARY KEY,
- id_desc       integer,
- actionparams  text[]
 );
 
 CREATE TABLE packages (
  id_pack      serial PRIMARY KEY,
- id_desc      integer,
+ description text,
  pack_name    varchar(64) UNIQUE,
  pack_version varchar(16),
  pack_release varchar(16)
 );
 
-CREATE TABLE package_lists (
- id_packlist serial PRIMARY KEY,
- id_desc     integer,
- packlist    integer[]
-);

@@ -12,27 +12,29 @@ if($error=="error") {
 	print "error";
 }
 
-if($error=="inserterror") {
+elseif($error=="inserterror") {
 	print 'Error inserting data to the database.';
 }
 
-if($error=="updateerror") {
+elseif($error=="updateerror") {
 	print 'Error updating data in the database.';
 }
 
-if($error=="invalidprodebian") {
+elseif($error=="invalidprodebian") {
 	print 'This Prodebian does not exist.';
 }
 
-if($error=="deleteerror") {
+elseif($error=="deleteerror") {
 	print 'Error deleting data from the database.';
 }
 
-if($error=="selecterror") {
+elseif($error=="selecterror") {
 	print 'Error retrieving data from the database.';
 }
-if($error=="autherror") {
+elseif($error=="autherror") {
 	print 'Permission denied';
 }
+
+else { print "error"; }
 //-----------------------
 my_endpage();
