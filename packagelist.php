@@ -15,14 +15,14 @@ if(!isset($_SESSION['id_prodebian'])) my_gotopage("findprodebian.php");
 // check that the action exists in the prodebian (for my_authenticate)
 $res = pg_query($database, "SELECT id_owner,actionlist FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
 $prodebians = pg_fetch_array($res);
-$found = array_search($_GET['id_action'], my_string2array($prodebians['actionlist']));
+$found = array_search($_GET['id_action'], my_array_psql2php($prodebians['actionlist']));
 if(is_bool($found) AND $found==FALSE) my_gotopage("error.php?why=badaction");
 //-------------------
 // GET THE PACKAGE LIST
 $res = pg_query($database, "SELECT title,actiontype,actionvalues FROM actions WHERE id_action='".$_GET['id_action']."';") or die();
 $actions = pg_fetch_array($res);
 if($actions['actiontype']!=1) my_gotopage("error.php");
-$packlist = my_string2array($actions['actionvalues']);
+$packlist = my_array_psql2php($actions['actionvalues']);
 //-------------------
 // ADD PACKAGE IF ASKED
 if(isset($_POST['addpackage']) AND $_POST['addpackage']!="") {
@@ -39,7 +39,7 @@ if(isset($_POST['addpackage']) AND $_POST['addpackage']!="") {
 	$found=array_search($packages['id_pack'],$packlist);
 	if(is_bool($found) AND $found==FALSE) array_push($packlist, $packages['id_pack']);
 	my_authenticate($prodebians['id_owner']);
-	pg_query($database, "UPDATE actions SET actionvalues='".my_array2string($packlist)."' WHERE id_action='".$_GET['id_action']."';") or die();
+	pg_query($database, "UPDATE actions SET actionvalues='".my_array_php2psql($packlist)."' WHERE id_action='".$_GET['id_action']."';") or die();
 	my_gotopage("packagelist.php?id_action=".$_GET['id_action']);
 }
 //-------------------
@@ -52,7 +52,7 @@ if(isset($_POST['delete'])) {
 		}
 	}
 	my_authenticate($prodebians['id_owner']);
-	pg_query($database, "UPDATE actions SET actionvalues='".my_array2string($packlist)."' WHERE id_action='".$_GET['id_action']."';") or die();
+	pg_query($database, "UPDATE actions SET actionvalues='".my_array_php2psql($packlist)."' WHERE id_action='".$_GET['id_action']."';") or die();
 	my_gotopage("packagelist.php?id_action=".$_GET['id_action']);
 }
 //-------------------

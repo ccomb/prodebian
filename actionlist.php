@@ -11,7 +11,7 @@ if(!isset($_SESSION['id_prodebian'])) my_gotopage("findprodebian.php");
 // GET THE ACTION LIST
 $res = pg_query($database, "SELECT id_owner,actionlist FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
 $prodebians = pg_fetch_array($res);
-$actionlist = my_string2array($prodebians['actionlist']);
+$actionlist = my_array_psql2php($prodebians['actionlist']);
 // create the action and redirect to the action edit page
 if(isset($_POST['addaction'])) {
 	 if($_POST['actiontype']=="addpackage") { $actiontype=1; $creationpage=my_getactionurl(1); }
@@ -26,7 +26,7 @@ elseif($_POST['actiontype']=="addfile"   ) { $actiontype=6; $creationpage=my_get
 	$actions = pg_fetch_array($res);
 	array_push($actionlist, $actions['id_action']);
 	my_authenticate($prodebians['id_owner']);
-	pg_query($database, "UPDATE prodebians SET actionlist='".my_array2string($actionlist)."' WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
+	pg_query($database, "UPDATE prodebians SET actionlist='".my_array_php2psql($actionlist)."' WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
 	my_gotopage($creationpage."?id_action=".$actions['id_action']);
 }
 		
@@ -43,7 +43,7 @@ if(isset($_POST['delete'])) {
 	if(count($dellist)>0) {
 		my_authenticate($prodebians['id_owner']);
 		pg_query($database, "DELETE FROM actions WHERE id_action IN (".implode(',',$dellist).");") or die();
-		pg_query($database, "UPDATE prodebians SET actionlist='".my_array2string($actionlist)."' WHERE id_prodebian=".$_SESSION['id_prodebian'].";") or die();
+		pg_query($database, "UPDATE prodebians SET actionlist='".my_array_php2psql($actionlist)."' WHERE id_prodebian=".$_SESSION['id_prodebian'].";") or die();
 		my_gotopage("actionlist.php");
 	}
 }

@@ -22,7 +22,7 @@ if($prodebians==0) my_gotopage("error.php?why=invalidprodebian");
 // package list
 $actionlist = $prodebians['actionlist'];
 if($actionlist=='{}') $action_number=0;
-else $action_number = count(my_string2array($actionlist));
+else $action_number = count(my_array_psql2php($actionlist));
 
 // description
 if($prodebians['description']==NULL OR $prodebians['description']=="") {

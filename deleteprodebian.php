@@ -31,7 +31,7 @@ if($_POST['confirm']=="yes") {
 	$database = my_connectdatabase();
 	$res = pg_query($database, "SELECT id_owner,actionlist FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
 	$prodebian = pg_fetch_array($res);
-	$actionlist=my_string2array($prodebian['actionlist']);
+	$actionlist=my_array_psql2php($prodebian['actionlist']);
 	my_authenticate($prodebian['id_owner']);
 	if(count($actionlist)>0) {
 		$res = pg_query($database, "DELETE FROM actions WHERE id_action IN (".implode(',',$actionlist).");") or die();

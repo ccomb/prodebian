@@ -16,7 +16,7 @@ if(isset($_POST['dlscript']) OR isset($_POST['dlguide'])) {
 	$res = pg_query($database, "SELECT * FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
 	$prodebian = pg_fetch_array($res);
 	if($prodebian==0) my_gotopage("error.php?why=invalidprodebian");
-	$actionlist=my_string2array($prodebian['actionlist']);
+	$actionlist=my_array_psql2php($prodebian['actionlist']);
 }
 //-------------------
 // DOWNLOAD THE INSTALL SCRIPT
@@ -32,14 +32,14 @@ if(isset($_POST['dlscript'])) {
 		if($actions['actiontype']==1) {
 			print "\napt-get install ";
 			//get the package list
-			foreach(my_string2array($actions['actionvalues']) as $id_package) {
+			foreach(my_array_psql2php($actions['actionvalues']) as $id_package) {
 				$res = pg_query($database, "SELECT pack_name FROM packages WHERE id_pack=".$id_package.";") or die();
 				$packages = pg_fetch_array($res);
 				print $packages['pack_name']." ";
 			}
 		}
 		if($actions['actiontype']==4) {
-			$script = my_string2array($actions['actionvalues']);
+			$script = my_array_psql2php($actions['actionvalues']);
 			print "\n".substr($script['0'],1,strlen($script['0'])-2);
 		}
 	}

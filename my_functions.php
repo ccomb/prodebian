@@ -61,21 +61,35 @@ function my_connectdatabase() {
 	return pg_connect("host=localhost dbname=prodebian user=ccomb password=prodebian");
 }
 //--------------------------
-function my_array2string($array) {
+function my_array_php2psql($array) {
 	//PHP array -> pgsql array
-	return "{".implode(',',$array)."}";
+	return '{"'.implode(',',$array).'"}';
 }
 //--------------------------
-function my_string2array($string) {
+function my_array_psql2php($string) {
 	//pgsql array -> PHP array
 	if($string=="{}") return array(); 
 	return(explode(",", trim($string,"}{")));
+}
+function my_string_php2psql($string) {
+	//PHP string -> pgsql safe string in array
+	return '{'.addslashes($string).'}';
+}
+function my_string_psql2php($string) {
+	//pgsql string in array -> PHP string
+	$string=stripslashes($string);
+	$stringlen=strlen($string);
+	if($string=="{}") return "";print($stringlen);
+	if(substr($string,1,1)!='"' OR substr($string,-2,1)!='"') {
+		return(substr($string,1,$stringlen-2));
+	}
+	return(substr($string,2,$stringlen-4));
 }
 //--------------------------
 // REMOVE HTML AND PHP TAGS, LIMIT THE LENGTH OF THE VARIABLES, AND REMOVE DANGEROUS CHARS.
 function my_purge_data() {
 	$from=array("'", "\"");
-	$to=array("X", "X");
+	$to=array("'", "\"");
 	foreach($_POST as $key => $value) {
 		// this purges the value but not the key!
 		if($key=="desc" OR $key=="runscript") $_POST[$key]=substr(str_replace($from, $to, strip_tags($value,'<a><b><i><u>')),0,900);
