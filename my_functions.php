@@ -3,7 +3,7 @@ function my_debug() {
 //print_r($_SERVER);
 print "GET=";print_r($_GET);print "<br />POST=";print_r($_POST);print "<br />SESSION=";print_r($_SESSION);print "<br />";
 }
-
+//--------------------------
 function my_beginpage() {
 	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -14,7 +14,7 @@ function my_beginpage() {
 <body>
 ';
 }
-
+//--------------------------
 function my_printmenu() {
 	// HOME
 	print '<a href="index.php">home</a>';
@@ -43,32 +43,32 @@ function my_printmenu() {
 	}
 	print '<br /><hr size="1" width="100%" />';
 }
-
+//--------------------------
 function my_endpage() {
 	// AJOUTER UN FORMULAIRE POUR ENVOYER UN COMMENTAIRE SUR LA PAGE
 	print '<hr size="1" width="100%" /><div style="text-align: right"><span style="font-size: smaller;">For bug reports, new features or any other comments, mail to <a href="mailto:ccomb@prodebian.org">ccomb</a></span></div></body></html>';
 }
-
+//--------------------------
 function my_gotopage($page) {
 	header("Location: http://".$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF']).$page);
 	exit();
 }
-
+//--------------------------
 function my_connectdatabase() {
 	return pg_connect("host=localhost dbname=prodebian user=ccomb password=prodebian");
 }
-
+//--------------------------
 function my_array2string($array) {
 	//PHP array -> pgsql array
 	return "{".implode(',',$array)."}";
 }
-
+//--------------------------
 function my_string2array($string) {
 	//pgsql array -> PHP array
 	if($string=="{}") return array(); 
 	return(explode(",", trim($string,"}{")));
 }
-
+//--------------------------
 // REMOVE HTML AND PHP TAGS, LIMIT THE VARIABLES TO 32 CHAR, AND REMOVE DANGEROUS CHARS.
 function my_purge_data() {
 	$from=array("'", "\"");
@@ -83,6 +83,7 @@ function my_purge_data() {
 		$_GET[$key]=substr(str_replace($from, $to, strip_tags($value)),0,64);
 	}
 }
+//--------------------------
 // authenticate and retry the url after authentication
 function my_authenticate($id_owner) {
 	if($id_owner=='') return 1;
@@ -118,7 +119,7 @@ function my_authenticate($id_owner) {
 	my_endpage();
 	exit();
 }
-
+//--------------------------
 function my_debianversion($version) {
 	    if($version==2.2) return "2.2 Potato (Stable)";
 	elseif($version==3.0) return "3.0 Woody (Stable)";
@@ -126,7 +127,7 @@ function my_debianversion($version) {
 	elseif($version==99) return "Sid (unstable)";
 	else die("invalid Debian version number");
 }
-
+//--------------------------
 function my_getactiontype($actiontype) {
 	    if($actiontype==1) return "install packages";
 	elseif($actiontype==2) return "Modify a config file";
@@ -137,6 +138,7 @@ function my_getactiontype($actiontype) {
 	elseif($actiontype==7) return "Add an external file";
 	else die("invalid action type number");
 }
+//--------------------------
 function my_getactionurl($actiontype) {
 	    if($actiontype==1) return "packagelist.php";
 	elseif($actiontype==2) return "modiffile.php";
@@ -147,6 +149,7 @@ function my_getactionurl($actiontype) {
 	elseif($actiontype==7) return "addfile.php";
 	else die("invalid action type number");
 }
+//--------------------------
 
 
 ?>

@@ -12,6 +12,11 @@ if(!isset($_GET['id_action'])) my_gotopage("findprodebian.php");
 $database = my_connectdatabase();
 if(!isset($_SESSION['id_prodebian'])) my_gotopage("findprodebian.php");
 
+// check that the action exists in the prodebian (for my_authenticate)
+$res = pg_query($database, "SELECT id_owner,actionlist FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
+$prodebians = pg_fetch_array($res);
+$found = array_search($_GET['id_action'], my_string2array($prodebians['actionlist']));
+if(is_bool($found) AND $found==FALSE) my_gotopage("error.php?why=badaction");
 //-------------------
 // GET THE PACKAGE LIST
 $res = pg_query($database, "SELECT actiontype,actionvalues FROM actions WHERE id_action='".$_GET['id_action']."';") or die();
@@ -33,10 +38,11 @@ if(isset($_POST['addpackage']) AND $_POST['addpackage']!="") {
 	}
 	$found=array_search($packages['id_pack'],$packlist);
 	if(is_bool($found) AND $found==FALSE) array_push($packlist, $packages['id_pack']);
-	my_authenticate(
+	my_authenticate($prodebians['id_owner']);
 	pg_query($database, "UPDATE actions SET actionvalues='".my_array2string($packlist)."' WHERE id_action='".$_GET['id_action']."';") or die();
+	my_gotopage("packagelist.php?id_action=".$_GET['id_action']);
 }
-
+//-------------------
 // REMOVE PACKAGE
 if(isset($_POST['delete'])) {
 	$length=count($packlist);
@@ -46,7 +52,9 @@ if(isset($_POST['delete'])) {
 			unset($packlist[$delkey]);
 		}
 	}
+	my_authenticate($prodebians['id_owner']);
 	pg_query($database, "UPDATE actions SET actionvalues='".my_array2string($packlist)."' WHERE id_action='".$_GET['id_action']."';") or die();
+	my_gotopage("packagelist.php?id_action=".$_GET['id_action']);
 }
 
 //---------------------
@@ -57,10 +65,10 @@ my_printmenu();
 // PROMPT TO ADD A NEW PACKAGE
 
 print '
-Name of package to add : <form action="packagelist.php?id_action='.$_GET['id_action'].'" method="POST">
+Name of the package to add: <form action="packagelist.php?id_action='.$_GET['id_action'].'" method="POST">
 <input type="text" name="addpackage" size="32" maxlength="32" />
 <button name="create" type="submit">add</button></form>
-Don\'t add too many packages in the same action. Create several actions with coherent groups of packages.<br /><br />actions
+Don\'t add too many packages in the same action. Create several actions with coherent groups of packages.<br /><br />
 ';
 
 // SHOW THE LIST
@@ -82,8 +90,6 @@ if(count($packlist)==0) {
 	}
 	print '</form>';
 }
-
-print '<hr align="left" size="2" width="50" />';
 
 
 //-------------------
