@@ -11,20 +11,29 @@ function my_beginpage() {
 ';
 // DEBUG: uncomment to show data on each page.
 //print_r($_SERVER);
-//print "GET=";print_r($_GET);print "<br />POST=";print_r($_POST);print "<br />SESSION=";print_r($_SESSION);print "<br />";
+print "GET=";print_r($_GET);print "<br />POST=";print_r($_POST);print "<br />SESSION=";print_r($_SESSION);print "<br />";
 }
 
 function my_printmenu() {
 	print '<a href="index.php">home</a> ';
-	print '<a href="findprodebian.php">find</a> ';
-	if (isset($_SESSION['id_prodebian'])) print '<a href="prodebian.php?id='.$_SESSION['id_prodebian'].'">back to prodebian #'.$_SESSION['id_prodebian'].'</a> ';
+	print '<a href="findprodebian.php">search</a> ';
+	if (isset($_SESSION['id_prodebian'])) { 
+		print '<a href="prodebian.php?id='.$_SESSION['id_prodebian'].'">back to prodebian #'.$_SESSION['id_prodebian'].'</a> ';
+	}
 	if (isset($_GET['logout'])) { unset($_SESSION['username']); unset($_SESSION['password']); }
 	if (isset($_SESSION['username']) AND isset($_SESSION['password'])) {
 		// logout link only if logged in
 		if($_SERVER['QUERY_STRING']=='') $and='';
 		else $and='&';
 		print '<a href="'.$_SERVER['PHP_SELF'].'?logout'.$and.$_SERVER['QUERY_STRING'].'">logout('.$_SESSION['username'].')</a><br />';
-	}	
+	}
+	if(isset($_SESSION['id_prodebian']) AND isset($_SESSION['searchresult'][$_SESSION['id_prodebian']])) {
+		$id_list = array_keys($_SESSION['searchresult']);
+		$current = array_search($_SESSION['id_prodebian'], $id_list);
+		if(isset($id_list[$current+1])) {
+			print '<a href="prodebian.php?id='.$id_list[$current+1].'">next result</a> ';
+		}
+	}
 	print "<br />";
 }
 
