@@ -9,16 +9,29 @@ function my_beginpage() {
 	</head>
 <body>
 ';
+// DEBUG: uncomment to show data on each page.
+//print_r($_SERVER);
+//print "GET=";print_r($_GET);print "<br />POST=";print_r($_POST);print "<br />SESSION=";print_r($_SESSION);print "<br />";
 }
 
 function my_printmenu() {
-	print '<a href="index.php">home</a> <a href="findprodebian.php">find</a> ';
-	if (isset($_SESSION['id_prodebian'])) print '<a href="prodebian.php?id='.$_SESSION['id_prodebian'].'">back to prodebian #'.$_SESSION['id_prodebian'].'</a><br />';
+	print '<a href="index.php">home</a> ';
+	print '<a href="findprodebian.php">find</a> ';
+	if (isset($_SESSION['id_prodebian'])) print '<a href="prodebian.php?id='.$_SESSION['id_prodebian'].'">back to prodebian #'.$_SESSION['id_prodebian'].'</a> ';
+	if (isset($_GET['logout'])) { unset($_SESSION['username']); unset($_SESSION['password']); }
+	if (isset($_SESSION['username']) AND isset($_SESSION['password'])) {
+		// logout link only if logged in
+		if($_SERVER['QUERY_STRING']=='') $and='';
+		else $and='&';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?logout'.$and.$_SERVER['QUERY_STRING'].'">logout('.$_SESSION['username'].')</a><br />';
+	}	
 	print "<br />";
 }
 
 function my_endpage() {
 	// AJOUTER UN FORMULAIRE POUR ENVOYER UN COMMENTAIRE SUR LA PAGE
+	// uncomment to show POST and GET on each page.
+	//print "GET=";print_r($_GET);print "<br />POST=";print_r($_POST);print "<br />SESSION=";print_r($_SESSION);print "<br />";
 	print '</body></html>';
 }
 
@@ -68,18 +81,19 @@ function my_authenticate($id_owner) {
 	if(isset($_SESSION['username']) AND isset($_SESSION['password'])) {
 		if($_SESSION['password']==$owners['password'] AND $_SESSION['username']==$owners['username']) return 1;
 	}
-	// authentication failed, we must authenticate and refill the form with previous post data
+	// authentication failed, we must authenticate and resubmit query with previous POST and GET data
 	my_beginpage();
 	my_printmenu();
 	if(isset($_POST['authenticate'])) print 'INVALID PASSWORD !<br />';
 	unset($_POST['username']);
 	unset($_POST['password']);
 	print '
-	<form action="'.$_SERVER['PHP_SELF'].'" method="POST">
+	<form action="'.$_SERVER['REQUEST_URI'].'" method="POST">
 	<input type="hidden" name="username" value="'.$value.'" />
 	Password for user "'.$owners['username'].'": <input type="text" name="password" size="32" maxlength="32" /><br />
+	<input type="hidden" name="username" value="'.$owners['username'].'" />
 	';
-	foreach($_POST as $key => $value) print '<input type="hidden" name="'.$owners['username'].'" value="'.$value.'" />';
+	foreach($_POST as $key => $value) print '<input type="hidden" name="'.$key.'" value="'.$value.'" />';
 	print '
 	<button name="authenticate" type="submit">submit</button>
 	</form>
