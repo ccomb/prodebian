@@ -24,13 +24,8 @@ CREATE TABLE debversions (
  version_nb     varchar(64)
 );
 
-CREATE TABLE descriptions_en_US (
+CREATE TABLE descriptions (
  id_desc     serial  PRIMARY KEY,
- description text
-);
-
-CREATE TABLE descriptions_fr_FR (
- id_desc     integer  UNIQUE REFERENCES description_en_US,
  description text
 );
 

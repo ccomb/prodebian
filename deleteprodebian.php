@@ -12,7 +12,7 @@ if((int)$_SESSION['id_prodebian']==0) goto_page("findprodebian.php");
 // CONFIRM THE DELETION
 if(!isset($_POST['confirm'])) {
 	beginpage();
-	print	'Voulez vous réellement effacer cette Prodebian #'.$_SESSION['id_prodebian'].' ?
+	print	'Voulez vous réellement effacer cette Prodebian #'.$_SESSION['id_prodebian'].' ainsi que sa liste de paquets ?
 	<form action="deleteprodebian.php" method="POST">
 		<button name="confirm" value="yes" type="submit">yes</button>
 		<button name="confirm" value="no" type="submit">no</button>
@@ -29,6 +29,8 @@ if($_POST['confirm']=="no") goto_page("prodebian.php?id=".$_SESSION['id_prodebia
 // DELETE THE PRODEBIAN
 if($_POST['confirm']=="yes") {
 	$database = connect_database();
+	$res = pg_query($database, "DELETE FROM package_lists WHERE id_packlist=(SELECT id_packlist FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."');");
+	if(!$res) goto_page("error.php?why=deleteerror");
 	$res = pg_query($database, "DELETE FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';");
 	if(!$res) goto_page("error.php?why=deleteerror");
 	$id_prodebian=$_SESSION['id_prodebian'];

@@ -15,15 +15,19 @@ if(isset($_POST['nameis'])) {
 //PROMPT THE USER
 beginpage();
 print_menu();
+
 print '
-<b>Chercher une Prodebian</b><br />
-<form action="prodebian.php" method="GET">
+<form action="findprodebian.php" method="POST">
+	<button name="namecontains" value="" type="submit">afficher toutes les Prodebian</button>
+</form>
+';
+print '<b>Chercher une Prodebian</b><br />';
+print '<form action="prodebian.php" method="GET">
 	par son numéro de référence : 
 	<input type="text" name="id" size="5" maxlength="5" />
 	<button name="find" type="submit">chercher</button>
 </form>
 ';
-
 print '
 <form action="findprodebian.php" method="POST">
 	Son nom est : 
@@ -31,7 +35,6 @@ print '
 	<button name="find" type="submit">chercher</button>
 </form>
 ';
-
 print '
 <form action="findprodebian.php" method="POST">
 	Son nom contient : 
