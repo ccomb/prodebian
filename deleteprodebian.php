@@ -41,7 +41,7 @@ if($_POST['confirm']=="yes") {
 	unset($_SESSION['id_prodebian']);
 	my_beginpage();
 	my_printmenu();
-	print 'La prodebian #'.$id_prodebian.' a bien été effacée.';
+	print 'The prodebian #'.$id_prodebian.' has been successfully deleted.';
 	my_endpage();
 	exit();
 }

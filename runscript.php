@@ -66,8 +66,8 @@ if(isset($_GET['edit'])) {
 	if($script=='') $script="(no script, clic on \"edit\" to create one)";
 	print '<b>'.my_string_psql2php($actions['title']).'</b><br />
 	<hr align="left" size="1" width="100%" />
-	<pre><code class=bash>'.my_string_psql2php($script).'</code></pre>
-	<a href="runscript.php?id_action='.$_GET['id_action'].'&edit">edit</a>
+	<pre><code class="bash">'.my_string_psql2php($script).'</code></pre>
+	<a href="runscript.php?id_action='.$_GET['id_action'].'&amp;edit">edit</a>
 	<br />
 	';
 	//-------------------

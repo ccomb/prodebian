@@ -38,7 +38,7 @@ if(isset($_POST['dlscript'])) {
 	foreach($actionlist as $action) {
 		$res = pg_query($database, "SELECT title,actiontype,actionvalues FROM actions WHERE id_action='".$action."';") or die();
 		$actions = pg_fetch_array($res);
-		print "\n\n#############_PRODEBIAN_SCRIPT_".$i++." ".$actions['title'];
+		print "\n\n#############_PRODEBIAN_SCRIPT_".$i++.": ".$actions['title'];
 		// INSTALL PACKAGE
 		if($actions['actiontype']==1) {
 			print "\n#!/bin/sh\napt-get install ";
@@ -77,7 +77,7 @@ my_beginpage();
 my_printmenu();
 
 print '
-1) Download the Debian netinst ISO image here : <a href=http://debian.org/>netinst.iso</a><br />
+1) Download the Debian netinst ISO image here : <a href="http://debian.org">netinst.iso</a><br />
 <form action="generateprodebian.php" method="POST">
 2) Download your Prodebian installation guide :<button name="dlguide" type="submit">download guide</button>
 </form>

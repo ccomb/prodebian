@@ -4,7 +4,7 @@
 # script can be bash, python, perl, awk, etc...
 
 # get the name of this script and the current working dir
-script=$0 # get the name of this script
+script=`pwd`/$0 # get the path of this script
 savewd="`pwd`"
 
 # create a temporary working directory
@@ -33,7 +33,7 @@ while [ $i -le $nbscripts ]; do
   cat current00 | tr -d '\r' > current00.new # this is a short dos2unix
   mv current00.new current00
   chmod +x current00
-  echo $pattern$i | tee -a $log
+  grep $pattern$i $script | tee -a $log
   ./current00 2>&1 | tee -a $log
   # delete the script
   rm -f current00

@@ -40,7 +40,7 @@ function my_printmenu() {
 	if (isset($_SESSION['username']) AND isset($_SESSION['password'])) {
 		// display logout link only if logged in
 		if($_SERVER['QUERY_STRING']=='') $and='';
-		else $and='&';
+		else $and='&amp;';
 		print ' | <a href="owner.php">'.$_SESSION['username'].'</a>';
 		print ' (<a href="'.$_SERVER['PHP_SELF'].'?logout'.$and.$_SERVER['QUERY_STRING'].'">logout</a>)';
 	}
@@ -136,16 +136,15 @@ function my_authenticate($id_owner) {
 	// authentication failed, we must authenticate and resubmit query with previous POST and GET data
 	my_beginpage();
 	my_printmenu();
-	if(isset($_POST['authenticate'])) print 'INVALID PASSWORD !<br />';
+	if(isset($_POST['authenticate'])) print 'invalid password!<br />';
 	unset($_POST['username']);
 	unset($_POST['password']);
 	print '
 	<form action="'.$_SERVER['REQUEST_URI'].'" method="POST">
-	<input type="hidden" name="username" value="'.$value.'" />
 	Password for user "'.$owners['username'].'": <input type="password" name="password" size="16" maxlength="16" />
 	<input type="hidden" name="username" value="'.$owners['username'].'" />
 	';
-	foreach($_POST as $key => $value) print '<input type="hidden" name="'.$key.'" value="'.$value.'" />';
+	foreach($_POST as $key => $value) print '<input type="hidden" name="'.$key.'" value="'.stripslashes($value).'" />';
 	print '
 	<button name="authenticate" type="submit">retry</button> <a href="'.$_SERVER['REQUEST_URI'].'" >cancel</a>
 	</form>

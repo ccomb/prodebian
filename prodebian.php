@@ -79,7 +79,7 @@ print "<b>Prodebian #".$prodebians['id_prodebian'].": ".my_string_psql2php($prod
 print "<pre>".my_string_psql2php($prodebians['description'])."</pre>";
 print '<hr align="left" size="2" width="100%" />';
 print "Based on Debian version : ".my_debianversion($prodebians['debversion'])."<br />";
-print "list of actions: <a href=actionlist.php>".$action_number." action(s)</a><br />";
+print 'list of actions: <a href="actionlist.php">'.$action_number.' action(s)</a><br />';
 print 'owner: <a href="owner.php?id='.$owners['id_owner'].'">'.$owners['username'].'</a><br />';
 //print "dedicated to a particular hardware : "."yes or no TBD<br />";
 //print "dedicated to a particular job : TBD<br />";
@@ -90,9 +90,9 @@ print 'owner: <a href="owner.php?id='.$owners['id_owner'].'">'.$owners['username
 
 
 print '
-<a href=prodebian.php?id='.$prodebians['id_prodebian'].'&edit>edit</a>
- | <a href=deleteprodebian.php?edit>delete</a>
- | <a href=generateprodebian.php?id='.$prodebians['id_prodebian'].'>download</a>
+<a href="prodebian.php?id='.$prodebians['id_prodebian'].'&amp;edit">edit</a>
+ | <a href="deleteprodebian.php?edit">delete</a>
+ | <a href="generateprodebian.php?id='.$prodebians['id_prodebian'].'">download</a>
 ';
 
 //-------------------
