@@ -2,8 +2,8 @@
 session_start();
 
 include 'html.php';
-beginpage();
-print_menu();
+purge_data();
+
 $database = connect_database();
 if(!isset($_SESSION['id_prodebian'])) goto_page("findprodebian.php");
 
@@ -18,7 +18,7 @@ if($packlist=='{}') $packlist=array();
 else $packlist = string2array($packlist);
 
 // ADD PACKAGE IF ASKED
-if(isset($_POST['addpackage'])) {
+if(isset($_POST['addpackage']) && $_POST['addpackage']!="") {
 	// try to find the package
 	$res = pg_query($database, "SELECT id_pack FROM packages WHERE pack_name='".$_POST['addpackage']."';");
 	$packages = pg_fetch_array($res);
@@ -29,13 +29,27 @@ if(isset($_POST['addpackage'])) {
 		$res = pg_query($database, "SELECT id_pack FROM packages WHERE oid=".$last_oid.";");
 		$packages = pg_fetch_array($res);
 	}
-	array_push($packlist, $packages['id_pack']);
-	$res = pg_query($database, "UPDATE package_lists SET packlist='".array2string($packlist)."';");
+	$found=array_search($packages['id_pack'],$packlist);
+	if(!$found)	array_push($packlist, $packages['id_pack']);
+	pg_query($database, "UPDATE package_lists SET packlist='".array2string($packlist)."'WHERE id_packlist='".$prodebian['id_packlist']."';");
+}
+
+// REMOVE PACKAGE
+if(isset($_POST['delete'])) {
+	$length=count($packlist);
+	foreach($_POST as $key => $value) {
+		if(substr($key,0,4)=="pack") {
+			$delkey=array_search($value, $packlist);
+			unset($packlist[$delkey]);
+		}
+	}
+	pg_query($database, "UPDATE package_lists SET packlist='".array2string($packlist)."' WHERE id_packlist='".$prodebian['id_packlist']."';");
 }
 
 //---------------------
 // DISPLAY PACKAGE LIST
-
+beginpage();
+print_menu();
 print '<b>Liste des paquets de cette Prodebian :</b><br />';
 if(count($packlist)==0) {
 	print "
@@ -45,12 +59,14 @@ This means that your Prodebian has no more functionalities than the Debian base 
 } else {
 
 print '<form action="packagelist.php" method="POST">';
+$i=0;
 foreach($packlist as $id_package) {
-	$res = pg_query($database, "SELECT pack_name FROM packages WHERE id_pack=".$id_package.";");
+	$res = pg_query($database, "SELECT pack_name, id_pack FROM packages WHERE id_pack=".$id_package.";");
 	$packages = pg_fetch_array($res);
-	print '<input type="checkbox" name="'.$packages['pack_name'].'" />'.$packages['pack_name'].'<br />';
+	print '<input type="checkbox" name="pack'.$i.'" value="'.$packages['id_pack'].'" />'.$packages['pack_name'].'<br />';
+	$i++;
 }
-print '</form><br />';
+print '<button name="delete" type="submit">effacer</button></form><br />';
 }
 
 //---------------------

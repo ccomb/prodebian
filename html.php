@@ -1,7 +1,7 @@
 <?php
 
 function beginpage() {
-print '
+	print '
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 	<head>
@@ -14,38 +14,46 @@ collaborative management of Prodebian systems (revision 1)<br />
 }
 
 function print_menu() {
-print '<a href="index.php">accueil</a><br />';
-if (isset($_SESSION['id_prodebian'])) print '<a href="prodebian.php?id='.$_SESSION['id_prodebian'].'">back to prodebian #'.$_SESSION['id_prodebian'].'</a><br />';
-print "<br />";
+	print '<a href="index.php">accueil</a> <a href="findprodebian.php">recherche</a><br />';
+	if (isset($_SESSION['id_prodebian'])) print '<a href="prodebian.php?id='.$_SESSION['id_prodebian'].'">back to prodebian #'.$_SESSION['id_prodebian'].'</a><br />';
+	print "<br />";
 }
 
 function endpage() {
-print '</body></html>
-';
-}
-
-function error_page() {
-beginpage();
-print 'Error inserting data to the database.';
-endpage();
+	// AJOUTER UN FORMULAIRE POUR ENVOYER UN COMMENTAIRE SUR LA PAGE
+	print '</body></html>';
 }
 
 function goto_page($page) {
-header("Location: http://".$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF']).$page);
+	header("Location: http://".$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF']).$page);
+	exit();
 }
 
 function connect_database() {
-return pg_connect("host=localhost dbname=prodebian user=ccomb password=prodebian");
+	return pg_connect("host=localhost dbname=prodebian user=ccomb password=prodebian");
 }
 
 function array2string($array) {
-//PHP array -> pgsql array
-return "{".implode(',',$array)."}";
+	//PHP array -> pgsql array
+	return "{".implode(',',$array)."}";
 }
 
 function string2array($string) {
-//pgsql array -> PHP array
-return(explode(",", trim($string,"}{")));
+	//pgsql array -> PHP array
+	if($string=="{}") return array(); 
+	return(explode(",", trim($string,"}{")));
+}
+
+// REMOVE HTML AND PHP TAGS, AND LIMIT THE VARIABLES TO 32 CHAR.
+function purge_data() {
+	foreach($_POST as $key => $value) {
+		// this purges the value but not the key!
+		$_POST[$key]=substr(strip_tags($value),0,32);
+	}
+	foreach($_GET as $key => $value) {
+		// this purges the value but not the key!
+		$_GET[$key]=substr(strip_tags($value),0,32);
+	}
 }
 
 ?>

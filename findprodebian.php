@@ -1,11 +1,66 @@
 <?php
-session_start();
-
+//session_start();
 include 'html.php';
+purge_data();
+
+
+if(isset($_POST['nameis'])) {
+	$database = connect_database();
+	$res = pg_query($database, "SELECT id_prodebian FROM prodebians WHERE name='".$_POST['nameis']."';");
+	$prodebian = pg_fetch_array($res);
+	goto_page("prodebian.php?id=".$prodebian['id_prodebian']);
+}
+
+//-------------------
+//PROMPT THE USER
 beginpage();
 print_menu();
+print '
+<b>Chercher une Prodebian</b><br />
+<form action="prodebian.php" method="GET">
+	par son numéro de référence : 
+	<input type="text" name="id" size="5" maxlength="5" />
+	<button name="find" type="submit">chercher</button>
+</form>
+';
+
+print '
+<form action="findprodebian.php" method="POST">
+	Son nom est : 
+	<input type="text" name="nameis" size="10" maxlength="10" />
+	<button name="find" type="submit">chercher</button>
+</form>
+';
+
+print '
+<form action="findprodebian.php" method="POST">
+	Son nom contient : 
+	<input type="text" name="namecontains" size="10" maxlength="10" />
+	<button name="find" type="submit">chercher</button>
+</form>
+';
 //-------------------
-find prodebian
-//-------------------
+// SEARCH AND DISPLAY THE RESULT AT THE END OF THE PAGE
+
+print '
+<hr align="left" size="2" width="100%" />
+<b>Résultat de recherche :</b><br />
+';
+
+if(isset($_POST['namecontains'])) {
+	$database = connect_database();
+	$from=array("*", "\\", "_", "%", "|", "+", "?", "^", "(", ")", "[", "]");
+	$to=array("\\\*", "\\\\", "\\\_", "\\\%", "\\\|", "\\\+", "\\\?", "\\\^", "\\\(", "\\\)", "\\\[", "\\\]");
+	$_POST['namecontains']=str_replace($from, $to, $_POST['namecontains']);
+	$res = pg_query($database, "SELECT id_prodebian, name FROM prodebians WHERE name SIMILAR TO '%".$_POST['namecontains']."%';");
+	$howmany=pg_num_rows($res);
+	for($row=0; $row<$howmany; $row++) {
+		$prodebian = pg_fetch_array($res, $row);
+		print "<a href=prodebian.php?id=".$prodebian['id_prodebian'].">Prodebian #".$prodebian['id_prodebian']."</a> : ".$prodebian['name']."<br />";
+	}
+}
+print '
+<hr align="left" size="2" width="100%" />
+';
 endpage();
 ?>

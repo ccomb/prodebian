@@ -1,5 +1,6 @@
 <?php
 include('html.php');
+purge_data();
 beginpage();
 print_menu();
 //-------------------
