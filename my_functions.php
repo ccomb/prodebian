@@ -49,7 +49,7 @@ function my_printmenu() {
 //--------------------------
 function my_endpage() {
 	// AJOUTER UN FORMULAIRE POUR ENVOYER UN COMMENTAIRE SUR LA PAGE
-	print '<hr size="1" width="100%" /><div style="text-align: right"><span style="font-size: smaller;">For new features, bug reports or any other comments, mail to <a href="mailto:ccomb@prodebian.org">ccomb</a></span></div></body></html>';
+	print '<hr size="1" width="100%" /><div style="text-align: right"><span style="font-size: smaller;">For new features, bug reports or any other comments, mail to <a href="mailto:ccomb@free.fr">ccomb</a></span></div></body></html>';
 }
 //--------------------------
 function my_gotopage($page) {
@@ -58,12 +58,12 @@ function my_gotopage($page) {
 }
 //--------------------------
 function my_connectdatabase() {
-	return pg_connect("host=localhost dbname=prodebian user=ccomb password=prodebian");
+	return pg_connect("host=127.0.0.1 dbname=prodebian user=ccomb password=prodebian");
 }
 //--------------------------
 function my_array_php2psql($array) {
 	//PHP array -> pgsql array
-	return '{"'.implode(',',$array).'"}';
+	return '{'.implode(',',$array).'}';
 }
 //--------------------------
 function my_array_psql2php($string) {

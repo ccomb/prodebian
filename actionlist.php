@@ -12,20 +12,21 @@ if(!isset($_SESSION['id_prodebian'])) my_gotopage("findprodebian.php");
 $res = pg_query($database, "SELECT id_owner,actionlist FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
 $prodebians = pg_fetch_array($res);
 $actionlist = my_array_psql2php($prodebians['actionlist']);
+
 // create the action and redirect to the action edit page
 if(isset($_POST['addaction'])) {
 	 if($_POST['actiontype']=="addpackage") { $actiontype=1; $creationpage=my_getactionurl(1); }
 elseif($_POST['actiontype']=="modiffile" ) { $actiontype=2; $creationpage=my_getactionurl(2); }
-//lseif($_POST['actiontype']=="rungroup"  ) { $actiontype=3; $creationpage=my_getactionurl(3); }
+//elseif($_POST['actiontype']=="rungroup" ) { $actiontype=3; $creationpage=my_getactionurl(3); }
 elseif($_POST['actiontype']=="runscript" ) { $actiontype=4; $creationpage=my_getactionurl(4); }
 elseif($_POST['actiontype']=="createfile") { $actiontype=5; $creationpage=my_getactionurl(5); }
 elseif($_POST['actiontype']=="addfile"   ) { $actiontype=6; $creationpage=my_getactionurl(6); }
+	my_authenticate($prodebians['id_owner']);
 	$res = pg_query($database, "INSERT INTO actions (actiontype,actionvalues) VALUES ('".$actiontype."','{}');") or die();
 	$last_oid = pg_last_oid($res);
 	$res = pg_query($database, "SELECT id_action FROM actions WHERE oid=".$last_oid.";") or die();
 	$actions = pg_fetch_array($res);
 	array_push($actionlist, $actions['id_action']);
-	my_authenticate($prodebians['id_owner']);
 	pg_query($database, "UPDATE prodebians SET actionlist='".my_array_php2psql($actionlist)."' WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
 	my_gotopage($creationpage."?id_action=".$actions['id_action']);
 }
@@ -56,7 +57,7 @@ my_printmenu();
 // PROMPT TO ADD A NEW ACTION
 
 print '
-What action do you want to add ?
+What action do you want to add ? (only the first and third actions are currently implemented)
 <form action="actionlist.php" method="POST">
 <select name="actiontype">
 	<option value="addpackage">'.my_getactiontype(1).'</option>

@@ -79,8 +79,6 @@ if(isset($_SESSION['searchresult'])) {
 			if($id!=0) print "<a href=prodebian.php?id=".$id.">Prodebian #".$id."</a> : ".$title."<br />";
 	}
 }
-print '
-<hr align="left" size="2" width="100%" />
-';
+
 my_endpage();
 ?>
