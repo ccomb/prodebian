@@ -24,7 +24,7 @@ print '
 ';
 endpage();
 exit();
-}
+
 
 ?>
 	

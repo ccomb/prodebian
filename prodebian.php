@@ -71,8 +71,8 @@ print "Version de Debian : ".$debversion['version_name']."<br />";
 print "<br />liste des paquets : <a href=packagelist.php>".$pack_number." paquet(s)</a><br />";
 print "liste des actions : "."TBD<br />";
 print '
-<form action="generateprodebian.php?id='.$prodebian['id_prodebian'].' method="POST">
-	<button name="generate" type="submit">générer</button>
+<form action="generateprodebian.php" method="GET">
+	<button name="id" value="'.$prodebian['id_prodebian'].'" type="submit">générer</button>
 </form>
 <form action="deleteprodebian.php" method="POST">
 	<button name="delete" type="submit">delete</button>
