@@ -75,10 +75,10 @@ function my_string2array($string) {
 // REMOVE HTML AND PHP TAGS, LIMIT THE LENGTH OF THE VARIABLES, AND REMOVE DANGEROUS CHARS.
 function my_purge_data() {
 	$from=array("'", "\"");
-	$to=array("X", "X");
+	$to=array("X", "\\\"");
 	foreach($_POST as $key => $value) {
 		// this purges the value but not the key!
-		if($key=="desc" OR $key="runscript") $_POST[$key]=substr(strip_tags($value,'<a><b><i><u>'),0,900);
+		if($key=="desc" OR $key="runscript") $_POST[$key]=substr(str_replace($from, $to, strip_tags($value,'<a><b><i><u>')),0,900);
 		else $_POST[$key]=substr(str_replace($from, $to, strip_tags($value)),0,64);
 	}
 	foreach($_GET as $key => $value) {

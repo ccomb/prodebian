@@ -69,7 +69,6 @@ my_printmenu();
 //---------------------
 // PROMPT TO ADD A NEW PACKAGE
 if($actions['title']=="") $actions['title']="(enter a short descriptive title for this action)";
-if (count($packlist)==0)  $help="(enter a package name)";
 print '<b>Title: '.$actions['title'].'</b><br />
 <form action="packagelist.php?id_action='.$_GET['id_action'].'" method="POST">
 <button type="submit">save</button>
@@ -82,7 +81,7 @@ print '<b>Title: '.$actions['title'].'</b><br />
 (Don\'t add too many packages in the same action. Create several actions with coherent groups of packages.)<br />
 <form action="packagelist.php?id_action='.$_GET['id_action'].'" method="POST">
 <button type="submit">add</button>
-<input type="text" name="addpackage" value="'.$help.'" size="32" maxlength="64" />
+<input type="text" name="addpackage" value="<enter a package name>" onFocus="this.value=&quot;&quot;" size="32" maxlength="64" />
 </form>
 ';
 

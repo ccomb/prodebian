@@ -4,7 +4,7 @@ session_start();
 include 'my_functions.php';
 my_purge_data();
 
-my_debug();
+//my_debug();
 
 //check arguments
 if(!isset($_GET['id_action'])) my_gotopage("findprodebian.php");
@@ -29,7 +29,7 @@ $script = $script['0'];
 //-------------------
 // SAVE THE SCRIPT
 if(isset($_POST['runscript'])) {
-	$script=array($_POST['runscript']);
+	$script=array('"'.$_POST['runscript'].'"');
 	my_authenticate($prodebians['id_owner']);
 	pg_query($database, "UPDATE actions SET actionvalues='".my_array2string($script)."' WHERE id_action='".$_GET['id_action']."';") or die();
 	my_gotopage("runscript.php?id_action=".$_GET['id_action']);
