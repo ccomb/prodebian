@@ -33,7 +33,7 @@ function my_printmenu() {
 	}
 	// CURRENT PRODEBIAN
 	if (isset($_SESSION['id_prodebian']) AND $_SERVER['SCRIPT_NAME']!="/prodebian.php") { 
-		print ' | <a href="prodebian.php">back to #'.$_SESSION['id_prodebian'].'</a> (<a href="actionlist.php">actions</a>)';
+		print ' | <a href="prodebian.php?id='.$_SESSION['id_prodebian'].'">back to #'.$_SESSION['id_prodebian'].'</a> (<a href="actionlist.php">actions</a>)';
 	}
 	if (isset($_GET['logout'])) { unset($_SESSION['username']); unset($_SESSION['password']); }
 	// LOGOUT

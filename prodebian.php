@@ -12,10 +12,19 @@ if(isset($_GET['id'])) {
 }
 
 if(!isset($_SESSION['id_prodebian'])) my_gotopage("findprodebian.php");
+$database = my_connectdatabase();
+
+// UPDATE TITLE AND DESCRIPTION
+if(isset($_POST['title']) AND isset($_POST['desc']) AND isset($_POST['debversion'])) { // get the description ID
+	$res = pg_query($database, "SELECT id_owner FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
+	$prodebian = pg_fetch_array($res);
+	my_authenticate($prodebian['id_owner']);
+	$res = pg_query($database, "UPDATE prodebians SET description='".$_POST['desc']."', title='".$_POST['title']."', debversion=".$_POST['debversion']." WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
+	my_gotopage("prodebian.php?id=".$_SESSION['id_prodebian']);
+}
 
 //-------------------
 // GET PRODEBIAN DATA
-$database = my_connectdatabase();
 $res = pg_query($database, "SELECT * FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
 $prodebians = pg_fetch_array($res);
 if($prodebians==0) my_gotopage("error.php?why=invalidprodebian");
@@ -24,10 +33,6 @@ $actionlist = $prodebians['actionlist'];
 if($actionlist=='{}') $action_number=0;
 else $action_number = count(my_array_psql2php($actionlist));
 
-// description
-if($prodebians['description']==NULL OR $prodebians['description']=="") {
-	$prodebians['description']="(No description. Please add one!)";
-}
 // owner
 if(isset($prodebians['id_owner'])) {
 	$res = pg_query($database, "SELECT id_owner,username FROM owners WHERE id_owner='".$prodebians['id_owner']."';") or die();
@@ -36,17 +41,43 @@ if(isset($prodebians['id_owner'])) {
 	$owners['username']="(click to own)";
 	$owners['id_owner']=0;
 }
-
+//-------------------
+// EDIT THE PRODEBIAN PARAMETERS
+if(isset($_GET['edit'])) {
+	my_beginpage();
+	my_printmenu();
+	if($prodebians['description']=='') {
+	  $prodebians['description']="(enter a detailed description of this prodebian)";
+	  $onfocusdesc='onFocus="this.value=&quot;&quot;"';
+	}
+	if($prodebians['title']=='') {
+	  $prodebians['title']="(enter a short descriptive title for this prodebian)";
+	  $onfocustitle='onFocus="this.value=&quot;&quot;"';
+	}	print '
+	<h2>Prodebian #'.$prodebians['id_prodebian'].'</h2>
+	<form action="prodebian.php?id='.$_SESSION['id_prodebian'].'" method="POST">
+	based on Debian version :
+	<select name="debversion" size="1">
+		<option value="2.2">'.my_debianversion(2.2).'</option>
+		<option value="3.0">'.my_debianversion(3.0).'</option>
+		<option value="3.1" selected>'.my_debianversion(3.1).'</option>
+		<option value="99">'.my_debianversion(99).'</option>
+	</select><br />
+	Short descriptive title :
+	<input type="text" name="title" value="'.$prodebians['title'].'"size="64" maxlength="64" '.$onfocustitle.' /><br /><br />
+	Detailed description: (Limited to 900 chars. Allowed html tags = &lt;a&gt;&lt;b&gt;&lt;i&gt;&lt;u&gt;)<br /><textarea name="desc" rows="15" cols="60" '.$onfocusdesc.' >'.$prodebians['description'].'</textarea><br />
+	<a href=prodebian.php?id='.$prodebians['id_prodebian'].'>cancel</a> <button name="save" type="submit">save</button>
+	</form>';
+	my_endpage();
+} else {
 //-------------------
 // DISPLAY THE PRODEBIAN SUMMARY
 my_beginpage();
 my_printmenu();
 
-print "<b>Prodebian #".$prodebians['id_prodebian']."</b><br /><br />";
-
-print "<a href=description.php>Title and description</a> : <b>".$prodebians['title']."</b><br />";
-print $prodebians['description'];
-print '<hr align="left" size="2" width="50%" />';
+print "<b>Prodebian #".$prodebians['id_prodebian'].": ".$prodebians['title']."</b><br />";
+print "<code>".$prodebians['description']."</code>";
+print '<hr align="left" size="2" width="100%" />';
 print "Based on Debian version : ".my_debianversion($prodebians['debversion'])."<br />";
 print "list of actions: <a href=actionlist.php>".$action_number." action(s)</a><br />";
 print 'owner: <a href="owner.php?id='.$owners['id_owner'].'">'.$owners['username'].'</a><br />';
@@ -59,14 +90,12 @@ print 'owner: <a href="owner.php?id='.$owners['id_owner'].'">'.$owners['username
 
 
 print '
-<form action="generateprodebian.php" method="GET">
-	<button name="id" value="'.$prodebians['id_prodebian'].'" type="submit">generate</button>
-</form>
-<form action="deleteprodebian.php" method="POST">
-	<button name="delete" type="submit">delete</button>
-</form>
+<a href=prodebian.php?id='.$prodebians['id_prodebian'].'&edit>edit</a>
+ | <a href=deleteprodebian.php?edit>delete</a>
+ | <a href=generateprodebian.php?id='.$prodebians['id_prodebian'].'>download</a>
 ';
 
 //-------------------
 my_endpage();
+}
 ?>

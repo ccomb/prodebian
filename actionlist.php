@@ -28,7 +28,7 @@ elseif($_POST['actiontype']=="addfile"   ) { $actiontype=6; $creationpage=my_get
 	$actions = pg_fetch_array($res);
 	array_push($actionlist, $actions['id_action']);
 	pg_query($database, "UPDATE prodebians SET actionlist='".my_array_php2psql($actionlist)."' WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
-	my_gotopage($creationpage."?id_action=".$actions['id_action']);
+	my_gotopage($creationpage."?id_action=".$actions['id_action']."&edit");
 }
 		
 // REMOVE ACTION
@@ -54,23 +54,8 @@ if(isset($_POST['delete'])) {
 my_beginpage();
 my_printmenu();
 //---------------------
-// PROMPT TO ADD A NEW ACTION
-
-print '
-What action do you want to add ? (only the first and third actions are currently implemented)
-<form action="actionlist.php" method="POST">
-<select name="actiontype">
-	<option value="addpackage">'.my_getactiontype(1).'</option>
-	<option value="modiffile">'.my_getactiontype(2).'</option>(line by line)
-	<option value="runscript">'.my_getactiontype(4).'</option>
-	<option value="createfile">'.my_getactiontype(5).'</option>
-	<option value="addfile">'.my_getactiontype(6).'</option>
-</select>
-<button name="addaction" type="submit">add</button></form><br />
-';
-
 // SHOW THE LIST
-print '<b>Action list of this Prodebian:</b><br />';
+print '<h2>Action list of the Prodebian #'.$_SESSION['id_prodebian'].'</h2>';
 if(count($actionlist)==0) {
 	print "
 You haven't added any action yet.<br />
@@ -88,9 +73,22 @@ foreach($actionlist as $action) {
 	print '<a href="'.my_getactionurl($actions['actiontype']).'?id_action='.$actions['id_action'].'">';
 	print $actions['title'].'</a><br />';
 }
-print '<button name="delete" type="submit">remove selected actions</button></form>';
+if(count($actionlist)!=0) print '<button name="delete" type="submit">delete selected</button></form>';
 }
-
+// PROMPT TO ADD A NEW ACTION
+print '
+<hr size="1" width="100%" />
+What action do you want to add ? (only the first and third actions are currently implemented)
+<form action="actionlist.php" method="POST">
+<select name="actiontype">
+	<option value="addpackage">'.my_getactiontype(1).'</option>
+	<option value="modiffile" disabled>'.my_getactiontype(2).' (line by line)</option>
+	<option value="runscript">'.my_getactiontype(4).'</option>
+	<option value="createfile" disabled>'.my_getactiontype(5).'</option>
+	<option value="addfile" disabled>'.my_getactiontype(6).'</option>
+</select>
+<button name="addaction" type="submit">add</button></form>
+';
 
 //-------------------
 my_endpage();

@@ -23,7 +23,8 @@ if(isset($_POST['dlscript']) OR isset($_POST['dlguide'])) {
 if(isset($_POST['dlscript'])) {
 	//header("Content-type: application/sh");
 	header("Content-Disposition: attachment; filename=prodebian".$_SESSION['id_prodebian']."_install_script.sh");
-	echo "#!/bin/bash";
+
+
 	foreach($actionlist as $action) {
 		$res = pg_query($database, "SELECT title,actiontype,actionvalues FROM actions WHERE id_action='".$action."';") or die();
 		$actions = pg_fetch_array($res);

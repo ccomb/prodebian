@@ -1,4 +1,7 @@
 #!/bin/bash
+# This script only requires "grep" and "coreutils"
+# it will run every prodebian scripts below separately
+# script can be bash, python, perl, awk, etc...
 
 # get the name of this script and the current working dir
 script=$0 # get the name of this script
@@ -10,6 +13,9 @@ mkdir $wdir
 
 # define the splitting pattern
 pattern="############################_PRODEBIAN_SCRIPT_"
+
+# be sure grep is installed
+which grep 2>&1 >/dev/null || apt-get install grep
 
 # how many scripts is there here ?
 nbscripts=$((`grep -c "$pattern" $script`-2))
