@@ -8,6 +8,7 @@ CREATE TABLE prodebians (
  title          varchar(64),
  debversion     real,
  version        integer,
+ id_base        integer,
  property       bit varying(4),
  id_owner       integer,
  description    text,
@@ -19,20 +20,22 @@ CREATE TABLE owners (
  username       varchar(64) UNIQUE,
  email          varchar(64),
  password       varchar(64),
- description text
+ description    text
 );
 
 CREATE TABLE actions (
  id_action      serial PRIMARY KEY,
  title          varchar(64),
- actiontype  integer,
- description text,
+ version        integer,
+ id_base        integer,
+ actiontype     integer,
+ description    text,
  actionvalues   text[]
 );
 
 CREATE TABLE packages (
  id_pack      serial PRIMARY KEY,
- description text,
+ description  text,
  pack_name    varchar(64) UNIQUE,
  pack_version varchar(16),
  pack_release varchar(16)

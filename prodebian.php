@@ -53,16 +53,21 @@ if(isset($_GET['edit'])) {
 	if($prodebians['title']=='') {
 	  $prodebians['title']="(enter a short descriptive title for this prodebian)";
 	  $onfocustitle='onFocus="this.value=&quot;&quot;"';
-	}	print '
+	}
+	print '
 	<h2>Prodebian #'.$prodebians['id_prodebian'].'</h2>
 	<form action="prodebian.php?id='.$_SESSION['id_prodebian'].'" method="POST">
 	based on Debian version :
-	<select name="debversion" size="1">
-		<option value="2.2">'.my_debianversion(2.2).'</option>
-		<option value="3.0">'.my_debianversion(3.0).'</option>
-		<option value="3.1" selected>'.my_debianversion(3.1).'</option>
-		<option value="99">'.my_debianversion(99).'</option>
-	</select><br />
+	<select name="debversion" size="1">';
+	foreach(array("2.2", "3.0", "3.1", "99") as $ver) {
+		if ($ver==$prodebians['debversion']) {
+			$selected="selected";
+		} else {
+			$selected="";
+		}
+		print "<option value=".$ver." ".$selected.">".my_debianversion("$ver")."</option>";
+	}
+	print '</select><br />
 	Short descriptive title :
 	<input type="text" name="title" value="'.my_string_psql2php($prodebians['title']).'"size="64" maxlength="64" '.$onfocustitle.' /><br /><br />
 	Detailed description: (Limited to 900 chars)<br /><textarea name="desc" rows="15" cols="60" '.$onfocusdesc.' >'.my_string_psql2php($prodebians['description']).'</textarea><br />
@@ -90,9 +95,10 @@ print 'owner: <a href="owner.php?id='.$owners['id_owner'].'">'.$owners['username
 
 
 print '
-<a href="prodebian.php?id='.$prodebians['id_prodebian'].'&amp;edit">edit</a>
- | <a href="deleteprodebian.php?edit">delete</a>
- | <a href="generateprodebian.php?id='.$prodebians['id_prodebian'].'">download</a>
+<a href="prodebian.php?id='.$prodebians['id_prodebian'].'&amp;edit=1">edit</a>
+ | <a href="deleteprodebian.php?edit=1">delete</a>
+ | <a href="generateprodebian.php?id='.$prodebians['id_prodebian'].'">release a version</a>
+ | <a href="release.php?id='.$prodebians['id_prodebian'].'">download</a>
 ';
 
 //-------------------

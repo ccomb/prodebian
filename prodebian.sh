@@ -30,7 +30,7 @@ while [ $i -le $nbscripts ]; do
   csplit -s -f $wdir/current $script %$pattern$i%+1 /$pattern/
   # execute the script number $i and write in the log
   cd $wdir
-  cat current00 | tr -d '\r' > current00.new # this is a short dos2unix
+  cat current00 | tr -d '\r' > current00.new # this is a basic dos2unix
   mv current00.new current00
   chmod +x current00
   grep $pattern$i $script | tee -a $log

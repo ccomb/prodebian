@@ -28,7 +28,7 @@ elseif($_POST['actiontype']=="addfile"   ) { $actiontype=6; $creationpage=my_get
 	$actions = pg_fetch_array($res);
 	array_push($actionlist, $actions['id_action']);
 	pg_query($database, "UPDATE prodebians SET actionlist='".my_array_php2psql($actionlist)."' WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
-	my_gotopage($creationpage."?id_action=".$actions['id_action']."&amp;edit");
+	my_gotopage($creationpage."?id_action=".$actions['id_action']."&amp;edit=1");
 }
 		
 // REMOVE ACTION

@@ -49,17 +49,21 @@ function my_printmenu() {
 //--------------------------
 function my_endpage() {
 	// AJOUTER UN FORMULAIRE POUR ENVOYER UN COMMENTAIRE SUR LA PAGE
-	print '<hr size="1" width="100%" /><div style="text-align: right"><span style="font-size: smaller;">For new features, bug reports or any other comments, mail to <a href="mailto:ccomb@free.fr">ccomb</a></span></div></body></html>';
+	print '<hr size="1" width="100%" /><div style="text-align: right"><span style="font-size: smaller;">This site is in pre-alpha state. Even the design is not finished. For new features, bug reports or any other comments, mail to <a href="mailto:ccomb@free.fr">ccomb</a></span></div></body></html>';
 	exit();
 }
 //--------------------------
 function my_gotopage($page) {
-	header("Location: http://".$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF']).$page);
+	header("Location: http://".$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF'])."/".$page);
 	exit();
 }
 //--------------------------
 function my_connectdatabase() {
-	return pg_connect("host=127.0.0.1 dbname=prodebian user=ccomb password=prodebian");
+	if($_SERVER[HTTP_HOST]!="127.0.0.1") {
+		return pg_connect("host=db.lo-data.net dbname=prodebian user=prodebian password=glv77ko");
+	} else {
+		return pg_connect("host=127.0.0.1 dbname=prodebian user=ccomb password=prodebian");
+	}	
 }
 //--------------------------
 function my_array_php2psql($array) {

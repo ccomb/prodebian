@@ -67,7 +67,7 @@ if(isset($_GET['edit'])) {
 	print '<b>'.my_string_psql2php($actions['title']).'</b><br />
 	<hr align="left" size="1" width="100%" />
 	<pre><code class="bash">'.my_string_psql2php($script).'</code></pre>
-	<a href="runscript.php?id_action='.$_GET['id_action'].'&amp;edit">edit</a>
+	<a href="runscript.php?id_action='.$_GET['id_action'].'&amp;edit=1">edit</a>
 	<br />
 	';
 	//-------------------
