@@ -25,10 +25,9 @@ if($actionlist=='{}') $action_number=0;
 else $action_number = count(my_string2array($actionlist));
 
 // description
-if(isset($prodebians['id_desc'])) {
-	$res = pg_query($database, "SELECT description FROM descriptions WHERE id_desc='".$prodebians['id_desc']."';") or die();
-	$descriptions = pg_fetch_array($res);
-} else $descriptions['description']="No description. Please add one.";
+if($prodebians['description']==NULL OR $prodebians['description']=="") {
+	$prodebians['description']="(No description. Please add one!)";
+}
 // owner
 if(isset($prodebians['id_owner'])) {
 	$res = pg_query($database, "SELECT id_owner,username FROM owners WHERE id_owner='".$prodebians['id_owner']."';") or die();

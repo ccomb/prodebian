@@ -4,7 +4,7 @@ session_start();
 include 'my_functions.php';
 my_purge_data();
 
-//my_debug();
+my_debug();
 
 //check arguments
 if(!isset($_GET['id_action'])) my_gotopage("findprodebian.php");
@@ -24,10 +24,11 @@ $res = pg_query($database, "SELECT title,actiontype,actionvalues FROM actions WH
 $actions = pg_fetch_array($res);
 if($actions['actiontype']!=4) my_gotopage("error.php?why=badtype");
 $script = my_string2array($actions['actionvalues']);
-$script=$script['0'];
+//$script=substr($script['0'],1,strlen($script['0'])-2);
+$script = $script['0'];
 //-------------------
 // SAVE THE SCRIPT
-if(isset($_POST['runscript']) AND $_POST['runscript']!="") {
+if(isset($_POST['runscript'])) {
 	$script=array($_POST['runscript']);
 	my_authenticate($prodebians['id_owner']);
 	pg_query($database, "UPDATE actions SET actionvalues='".my_array2string($script)."' WHERE id_action='".$_GET['id_action']."';") or die();
@@ -45,7 +46,7 @@ my_beginpage();
 my_printmenu();
 
 if($actions['title']=="") $actions['title']="(enter a short descriptive title for this action)";
-if($script=="") $script="(enter a small script to run)";
+if($script=="") $script="(enter a small shell script to run)";
 print '<b>Title: '.$actions['title'].'</b><br />
 <form action="runscript.php?id_action='.$_GET['id_action'].'" method="POST">
 <button type="submit">save</button>
@@ -54,7 +55,7 @@ print '<b>Title: '.$actions['title'].'</b><br />
 
 <hr align="left" size="1" width="100%" />
 
-<b>Script to run:</b> <pre><code class=bash>'.$script.'</code></pre>
+<b>Shell script to run:</b> <pre><code class=bash>'.$script.'</code></pre>
 <form action="runscript.php?id_action='.$_GET['id_action'].'" method="POST">
 <textarea name="runscript" rows="15" cols="60">'.$script.'</textarea><br />
 <button type="submit">save</button>

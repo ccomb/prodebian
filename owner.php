@@ -62,7 +62,7 @@ if(isset($_GET['id']) AND (int)$_GET['id']!=0) {
 		print '
 			<form action="owner.php?id='.$owners['id_owner'].'" method="POST">
 	your username: '.$owners['username'].'<br />
-	your password: <input type="text" name="password" size="16" maxlength="16" />(leave blank to keep)<br />
+	your password: <input type="password" name="password" size="16" maxlength="16" />(leave blank to keep)<br />
 	your e-mail: <input type="text" name="email" value="'.$owners['email'].'" size="32" maxlength="64" /><br />
 	Your comments or details: (Limited to 900 chars)<br /><textarea name="desc" rows="15" cols="60">'.$owners['description'].'</textarea><br />
 	<button name="update" type="submit">save</button>

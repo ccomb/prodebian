@@ -29,11 +29,13 @@ if($_POST['confirm']=="no") my_gotopage("prodebian.php?id=".$_SESSION['id_prodeb
 // DELETE THE PRODEBIAN
 if($_POST['confirm']=="yes") {
 	$database = my_connectdatabase();
-	$res = pg_query($database, "SELECT id_owner FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
+	$res = pg_query($database, "SELECT id_owner,actionlist FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
 	$prodebian = pg_fetch_array($res);
+	$actionlist=my_string2array($prodebian['actionlist']);
 	my_authenticate($prodebian['id_owner']);
-	$res = pg_query($database, "DELETE FROM package_lists WHERE id_packlist=(SELECT id_packlist FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."');") or die();
-	$res = pg_query($database, "DELETE FROM descriptions WHERE id_desc=(SELECT id_desc FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."');") or die();
+	if(count($actionlist)>0) {
+		$res = pg_query($database, "DELETE FROM actions WHERE id_action IN (".implode(',',$actionlist).");") or die();
+	}
 	$res = pg_query($database, "DELETE FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
 	$id_prodebian=$_SESSION['id_prodebian'];
 	unset($_SESSION['id_prodebian']);

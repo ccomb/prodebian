@@ -10,30 +10,38 @@ if(isset($_GET['id']) AND (int)$_GET['id']==0) my_gotopage("findprodebian.php");
 if(isset($_GET['id'])) $_SESSION['id_prodebian'] = $_GET['id'];
 
 //-------------------
-// GET PRODEBIAN DATA
-$database = my_connectdatabase();
-$res = pg_query($database, "SELECT * FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
-$prodebian = pg_fetch_array($res);
-if($prodebian==0) my_gotopage("error.php?why=invalidprodebian");
-$id_packlist = $prodebian['id_packlist'];
-if($id_packlist=='{}') $pack_number=0;
-else {
-	$res = pg_query($database, "SELECT * FROM package_lists WHERE id_packlist=".$id_packlist.";") or die();
-	$package_lists = pg_fetch_array($res);
+// GET DATA
+if(isset($_POST['dlscript']) OR isset($_POST['dlguide'])) {
+	$database = my_connectdatabase();
+	$res = pg_query($database, "SELECT * FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
+	$prodebian = pg_fetch_array($res);
+	if($prodebian==0) my_gotopage("error.php?why=invalidprodebian");
+	$actionlist=my_string2array($prodebian['actionlist']);
 }
-
 //-------------------
 // DOWNLOAD THE INSTALL SCRIPT
 if(isset($_POST['dlscript'])) {
 	//header("Content-type: application/sh");
 	header("Content-Disposition: attachment; filename=prodebian".$_SESSION['id_prodebian']."_install_script.sh");
-	print '#!/bin/bash
-
-apt-get install ';
-	foreach(my_string2array($package_lists['packlist']) as $id_package) {
-		$res = pg_query($database, "SELECT pack_name FROM packages WHERE id_pack=".$id_package.";") or die();
-		$packages = pg_fetch_array($res);
-		print $packages['pack_name']." ";
+	echo "#!/bin/bash";
+	foreach($actionlist as $action) {
+		$res = pg_query($database, "SELECT title,actiontype,actionvalues FROM actions WHERE id_action='".$action."';") or die();
+		$actions = pg_fetch_array($res);
+		print "\n\n#".$actions['title']."\n########################";
+		// INSTALL PACKAGE
+		if($actions['actiontype']==1) {
+			print "\napt-get install ";
+			//get the package list
+			foreach(my_string2array($actions['actionvalues']) as $id_package) {
+				$res = pg_query($database, "SELECT pack_name FROM packages WHERE id_pack=".$id_package.";") or die();
+				$packages = pg_fetch_array($res);
+				print $packages['pack_name']." ";
+			}
+		}
+		if($actions['actiontype']==4) {
+			$script = my_string2array($actions['actionvalues']);
+			print "\n".substr($script['0'],1,strlen($script['0'])-2);
+		}
 	}
 	exit();
 }
@@ -44,7 +52,7 @@ if(isset($_POST['dlguide'])) {
 	header("Content-Disposition: attachment; filename=prodebian".$_SESSION['id_prodebian']."_install_guide.txt");
 	print 'Prodebian blah blah blah
 - boot from the Debian netinst CDROM
-- install...
+- install the base
 - login as root
 - run script.sh
 - enjoy the prodebian

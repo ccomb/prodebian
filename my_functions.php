@@ -72,13 +72,13 @@ function my_string2array($string) {
 	return(explode(",", trim($string,"}{")));
 }
 //--------------------------
-// REMOVE HTML AND PHP TAGS, LIMIT THE VARIABLES TO 32 CHAR, AND REMOVE DANGEROUS CHARS.
+// REMOVE HTML AND PHP TAGS, LIMIT THE LENGTH OF THE VARIABLES, AND REMOVE DANGEROUS CHARS.
 function my_purge_data() {
 	$from=array("'", "\"");
-	$to=array("”", "”");
+	$to=array("X", "X");
 	foreach($_POST as $key => $value) {
 		// this purges the value but not the key!
-		if($key=="desc") $_POST[$key]=substr(strip_tags($value,'<a><b><i><u>'),0,900);
+		if($key=="desc" OR $key="runscript") $_POST[$key]=substr(strip_tags($value,'<a><b><i><u>'),0,900);
 		else $_POST[$key]=substr(str_replace($from, $to, strip_tags($value)),0,64);
 	}
 	foreach($_GET as $key => $value) {
@@ -111,7 +111,7 @@ function my_authenticate($id_owner) {
 	print '
 	<form action="'.$_SERVER['REQUEST_URI'].'" method="POST">
 	<input type="hidden" name="username" value="'.$value.'" />
-	Password for user "'.$owners['username'].'": <input type="text" name="password" size="16" maxlength="16" />
+	Password for user "'.$owners['username'].'": <input type="password" name="password" size="16" maxlength="16" />
 	<input type="hidden" name="username" value="'.$owners['username'].'" />
 	';
 	foreach($_POST as $key => $value) print '<input type="hidden" name="'.$key.'" value="'.$value.'" />';
@@ -134,22 +134,20 @@ function my_debianversion($version) {
 function my_getactiontype($actiontype) {
 	    if($actiontype==1) return "install packages";
 	elseif($actiontype==2) return "Modify a config file";
-	elseif($actiontype==3) return "Run a group of actions";
-	elseif($actiontype==4) return "Run a command";
-	elseif($actiontype==5) return "Run a small script";
-	elseif($actiontype==6) return "Create and edit a file";
-	elseif($actiontype==7) return "Add an external file";
+//	elseif($actiontype==3) return "Run a group of actions";
+	elseif($actiontype==4) return "Run a small script";
+	elseif($actiontype==5) return "Create and edit a file";
+	elseif($actiontype==6) return "Add an external file";
 	else die("invalid action type number");
 }
 //--------------------------
 function my_getactionurl($actiontype) {
 	    if($actiontype==1) return "packagelist.php";
 	elseif($actiontype==2) return "modiffile.php";
-	elseif($actiontype==3) return "rungroup.php";
-	elseif($actiontype==4) return "runcommand.php";
-	elseif($actiontype==5) return "runscript.php";
-	elseif($actiontype==6) return "createfile.php";
-	elseif($actiontype==7) return "addfile.php";
+//	elseif($actiontype==3) return "rungroup.php";
+	elseif($actiontype==4) return "runscript.php";
+	elseif($actiontype==5) return "createfile.php";
+	elseif($actiontype==6) return "addfile.php";
 	else die("invalid action type number");
 }
 //--------------------------
