@@ -49,8 +49,8 @@ if(isset($_GET['id']) AND (int)$_GET['id']!=0) {
 		my_beginpage();
 		my_printmenu();
 		print 'Prodebian owner: '.$owners['username'].'<br />';
-		print 'password: <a href="owner.php?id='.$owners['id_owner'].'&modify=1">(modify)</a><br />';
-		print 'e-mail: <a href="owner.php?id='.$owners['id_owner'].'&modify=1">(modify)</a><br /><br />';
+		print 'password: <a href="owner.php?id='.$owners['id_owner'].'&modify">(modify)</a><br />';
+		print 'e-mail: <a href="owner.php?id='.$owners['id_owner'].'&modify">(modify)</a><br /><br />';
 		print 'owners\'s comments or details:<br />'.$owners['description'];
 		my_endpage();
 		exit();
@@ -88,7 +88,7 @@ if(isset($_POST['username']) AND isset($_POST['password']) AND (int)$prodebians[
 		my_beginpage();
 		my_printmenu();
 		print 'A Prodebian account has been created with username "'.$_POST['username'].'".<br />';
-		print 'The <a href="prodebian.php?id='.$_SESSION['id_prodebian'].'">Prodebian #'.$_SESSION['id_prodebian'].'</a> now belongs to you<br />'.
+		print 'The <a href="prodebian.php?id='.$_SESSION['id_prodebian'].'">Prodebian #'.$_SESSION['id_prodebian'].'</a> now belongs to you<br />';
 		my_endpage();
 	} else { // the user exists : check the password and give him the prodebian
 		if($_POST['password']==$owners['password'] AND $_POST['username']==$owners['username']) {
@@ -97,7 +97,7 @@ if(isset($_POST['username']) AND isset($_POST['password']) AND (int)$prodebians[
 			my_appropriate($owners['id_owner'], $_SESSION['id_prodebian']);
 			my_beginpage();
 			my_printmenu();
-			print 'The <a href="prodebian.php?id='.$_SESSION['id_prodebian'].'">Prodebian #'.$_SESSION['id_prodebian'].'</a> now belongs to you<br />'.
+			print 'The <a href="prodebian.php?id='.$_SESSION['id_prodebian'].'">Prodebian #'.$_SESSION['id_prodebian'].'</a> now belongs to you<br />';
 			my_endpage();
 		} else {
 			my_beginpage();
@@ -119,7 +119,7 @@ if(isset($_GET['id']) AND $_GET['id']==0) {
 			password: <input type="text" name="password" size="32" maxlength="32" /><br />
 			<button name="save" type="submit">save</button>
 			</form>
-	';
+		';
 		my_endpage();
 } else {
 		$res = pg_query($database, "SELECT id_owner FROM owners WHERE username='".$_SESSION['username']."';") or die();

@@ -55,7 +55,7 @@ my_beginpage();
 my_printmenu();
 //---------------------
 // SHOW THE LIST
-print '<h2>Action list of the Prodebian #'.$_SESSION['id_prodebian'].'</h2>';
+print '<b>Action list of the <a href="prodebian.php?id='.$_SESSION['id_prodebian'].'">Prodebian #'.$_SESSION['id_prodebian'].'</a></b><br /><br />';
 if(count($actionlist)==0) {
 	print "
 You haven't added any action yet.<br />

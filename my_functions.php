@@ -50,6 +50,7 @@ function my_printmenu() {
 function my_endpage() {
 	// AJOUTER UN FORMULAIRE POUR ENVOYER UN COMMENTAIRE SUR LA PAGE
 	print '<hr size="1" width="100%" /><div style="text-align: right"><span style="font-size: smaller;">For new features, bug reports or any other comments, mail to <a href="mailto:ccomb@free.fr">ccomb</a></span></div></body></html>';
+	exit();
 }
 //--------------------------
 function my_gotopage($page) {
@@ -73,31 +74,47 @@ function my_array_psql2php($string) {
 }
 function my_string_php2psql($string) {
 	//PHP string -> pgsql safe string in array
-	return '{'.addslashes($string).'}';
+	return addslashes($string);
 }
 function my_string_psql2php($string) {
 	//pgsql string in array -> PHP string
+	$convmap=array(0x80, 0xff, 0, 0xff);
+	//return mb_encode_numericentity(htmlspecialchars(stripslashes($string),$convmap, "UTF-8"));
+	return htmlentities(stripslashes($string), ENT_COMPAT, "UTF-8");
+}
+function my_script_php2psql($string) {
+	//PHP string -> pgsql safe string in array
+	return '{'.addslashes($string).'}';
+}
+function my_script_psql2php($string) {
+	//pgsql string in array -> PHP string
+	$convmap=array(0x80, 0xff, 0, 0xff);
 	$string=stripslashes($string);
 	$stringlen=strlen($string);
-	if($string=="{}") return "";print($stringlen);
+	if($string=="{}") return "";
 	if(substr($string,1,1)!='"' OR substr($string,-2,1)!='"') {
-		return(substr($string,1,$stringlen-2));
+		//return(mb_encode_numericentity(substr($string,1,$stringlen-2),$convmap, "UTF-8"));
+		return substr($string,1,$stringlen-2);
 	}
-	return(substr($string,2,$stringlen-4));
+	//return(mb_encode_numericentity(substr($string,2,$stringlen-4),$convmap, "UTF-8"));
+	return substr($string,2,$stringlen-4);
 }
 //--------------------------
 // REMOVE HTML AND PHP TAGS, LIMIT THE LENGTH OF THE VARIABLES, AND REMOVE DANGEROUS CHARS.
 function my_purge_data() {
-	$from=array("'", "\"");
-	$to=array("'", "\"");
+//	$from=array("'", "\"");
+//	$to=array("'", "\"");
+	// PURGE POST
 	foreach($_POST as $key => $value) {
 		// this purges the value but not the key!
-		if($key=="desc" OR $key=="runscript") $_POST[$key]=substr(str_replace($from, $to, strip_tags($value,'<a><b><i><u>')),0,900);
-		else $_POST[$key]=substr(str_replace($from, $to, strip_tags($value)),0,64);
+		if($key=="desc") $_POST[$key]=substr($value,0,900);
+		elseif($key=="runscript") $_POST[$key]=substr($value,0,900);
+		else $_POST[$key]=substr(strip_tags($value),0,64);
 	}
+	// PURGE GET
 	foreach($_GET as $key => $value) {
 		// this purges the value but not the key!
-		$_GET[$key]=substr(str_replace($from, $to, strip_tags($value)),0,64);
+		$_GET[$key]=substr(strip_tags($value),0,64);
 	}
 }
 //--------------------------
@@ -130,7 +147,7 @@ function my_authenticate($id_owner) {
 	';
 	foreach($_POST as $key => $value) print '<input type="hidden" name="'.$key.'" value="'.$value.'" />';
 	print '
-	<button name="authenticate" type="submit">retry</button>
+	<button name="authenticate" type="submit">retry</button> <a href="'.$_SERVER['REQUEST_URI'].'" >cancel</a>
 	</form>
 	';
 	my_endpage();

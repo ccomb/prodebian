@@ -19,7 +19,7 @@ if(isset($_POST['title']) AND isset($_POST['desc']) AND isset($_POST['debversion
 	$res = pg_query($database, "SELECT id_owner FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
 	$prodebian = pg_fetch_array($res);
 	my_authenticate($prodebian['id_owner']);
-	$res = pg_query($database, "UPDATE prodebians SET description='".$_POST['desc']."', title='".$_POST['title']."', debversion=".$_POST['debversion']." WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
+	$res = pg_query($database, "UPDATE prodebians SET description='".my_string_php2psql($_POST['desc'])."', title='".my_string_php2psql($_POST['title'])."', debversion=".$_POST['debversion']." WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
 	my_gotopage("prodebian.php?id=".$_SESSION['id_prodebian']);
 }
 
@@ -64,8 +64,8 @@ if(isset($_GET['edit'])) {
 		<option value="99">'.my_debianversion(99).'</option>
 	</select><br />
 	Short descriptive title :
-	<input type="text" name="title" value="'.$prodebians['title'].'"size="64" maxlength="64" '.$onfocustitle.' /><br /><br />
-	Detailed description: (Limited to 900 chars. Allowed html tags = &lt;a&gt;&lt;b&gt;&lt;i&gt;&lt;u&gt;)<br /><textarea name="desc" rows="15" cols="60" '.$onfocusdesc.' >'.$prodebians['description'].'</textarea><br />
+	<input type="text" name="title" value="'.my_string_psql2php($prodebians['title']).'"size="64" maxlength="64" '.$onfocustitle.' /><br /><br />
+	Detailed description: (Limited to 900 chars)<br /><textarea name="desc" rows="15" cols="60" '.$onfocusdesc.' >'.my_string_psql2php($prodebians['description']).'</textarea><br />
 	<a href=prodebian.php?id='.$prodebians['id_prodebian'].'>cancel</a> <button name="save" type="submit">save</button>
 	</form>';
 	my_endpage();
@@ -74,9 +74,9 @@ if(isset($_GET['edit'])) {
 // DISPLAY THE PRODEBIAN SUMMARY
 my_beginpage();
 my_printmenu();
-
-print "<b>Prodebian #".$prodebians['id_prodebian'].": ".$prodebians['title']."</b><br />";
-print "<code>".$prodebians['description']."</code>";
+if($prodebians['description']=='') $prodebians['description']='(no description. Please add one!)';
+print "<b>Prodebian #".$prodebians['id_prodebian'].": ".my_string_psql2php($prodebians['title'])."</b>";
+print "<pre>".my_string_psql2php($prodebians['description'])."</pre>";
 print '<hr align="left" size="2" width="100%" />';
 print "Based on Debian version : ".my_debianversion($prodebians['debversion'])."<br />";
 print "list of actions: <a href=actionlist.php>".$action_number." action(s)</a><br />";

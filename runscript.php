@@ -2,7 +2,7 @@
 session_start();
 
 include 'my_functions.php';
-my_purge_data();
+//my_purge_data();
 
 //my_debug();
 
@@ -22,7 +22,7 @@ if(is_bool($found) AND $found==FALSE) my_gotopage("error.php?why=badaction");
 // SAVE THE TITLE AND THE SCRIPT
 if(isset($_POST['runscript']) AND isset($_POST['title'])) {
 	my_authenticate($prodebians['id_owner']);
-	pg_query($database, "UPDATE actions SET actionvalues='".my_string_php2psql($_POST['runscript'])."',title='".addslashes($_POST['title'])."' WHERE id_action='".$_GET['id_action']."';") or die();
+	pg_query($database, "UPDATE actions SET actionvalues='{\"".my_string_php2psql($_POST['runscript'])."\"}',title='".my_string_php2psql($_POST['title'])."' WHERE id_action='".$_GET['id_action']."';") or die();
 	my_gotopage("runscript.php?id_action=".$_GET['id_action']);
 }
 //-------------------
@@ -30,15 +30,15 @@ if(isset($_POST['runscript']) AND isset($_POST['title'])) {
 $res = pg_query($database, "SELECT title,actiontype,actionvalues FROM actions WHERE id_action='".$_GET['id_action']."';") or die();
 $actions = pg_fetch_array($res);
 if($actions['actiontype']!=4) my_gotopage("error.php?why=badtype");
-$script = my_string_psql2php($actions['actionvalues']);
+$script = my_script_psql2php($actions['actionvalues']);
 //$script=substr($script['0'],1,strlen($script['0'])-2);
 //-------------------
 // EDIT THE TITLE AND SCRIPT IF REQUESTED
-if(isset($_GET['edit'])) {
+if(isset($_GET['edit'])) { 
 	my_beginpage();
 	my_printmenu();
 	if($actions['title']=='') {
-	  $title="(enter a short descriptive title for this action)";
+	  $actions['title']="(enter a short descriptive title for this action)";
 	  $onfocustitle='onFocus="this.value=&quot;&quot;"';
 	}
 	if($script=='') {
@@ -48,11 +48,11 @@ if(isset($_GET['edit'])) {
 	print '
 	<b>Title:</b><br />
 	<form action="runscript.php?id_action='.$_GET['id_action'].'" method="POST">
-		<input type="text" name="title" value="'.$title.'" size="64" maxlength="64" '.$onfocustitle.' />
+		<input type="text" name="title" value="'.my_string_psql2php($actions['title']).'" size="64" maxlength="64" '.$onfocustitle.' />
 		<br /><br />
-		<b>Small script to run:</b><br />
-		<textarea name="runscript" rows="15" cols="60" '.$onfocuscript.'>'.$script.'</textarea><br />
-		<button type="submit">save</button>
+		<b>Small script to run (with interpretor as first line, example: #!/bin/sh):</b><br />
+		<textarea name="runscript" rows="15" cols="60" '.$onfocuscript.'>'.my_string_psql2php($script).'</textarea><br />
+		<a href=runscript.php?id_action='.$_GET['id_action'].'>cancel</a> <button type="submit">save</button>
 	</form>
 	<br />
 	';
@@ -63,10 +63,10 @@ if(isset($_GET['edit'])) {
 	my_beginpage();
 	my_printmenu();
 	if($actions['title']=='') $actions['title']="(no title, clic on \"edit\" to add one)";
-	if($script=='') $script="(no script, clic on \"edit\" to create on)";
-	print '<b>'.stripslashes($actions['title']).'</b><br />
+	if($script=='') $script="(no script, clic on \"edit\" to create one)";
+	print '<b>'.my_string_psql2php($actions['title']).'</b><br />
 	<hr align="left" size="1" width="100%" />
-	<pre><code class=bash>'.$script.'</code></pre>
+	<pre><code class=bash>'.my_string_psql2php($script).'</code></pre>
 	<a href="runscript.php?id_action='.$_GET['id_action'].'&edit">edit</a>
 	<br />
 	';

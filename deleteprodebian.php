@@ -12,10 +12,10 @@ if((int)$_SESSION['id_prodebian']==0) my_gotopage("findprodebian.php");
 // CONFIRM THE DELETION
 if(!isset($_POST['confirm'])) {
 	my_beginpage();
-	print	'Voulez vous réellement effacer cette Prodebian #'.$_SESSION['id_prodebian'].' ainsi que sa liste de paquets ?
+	print	'Are you sure you want to definitely erase this Prodebian #'.$_SESSION['id_prodebian'].' as well as its package list?
 	<form action="deleteprodebian.php" method="POST">
-		<button name="confirm" value="yes" type="submit">yes</button>
-		<button name="confirm" value="no" type="submit">no</button>
+		<button name="confirm" value="yes" type="submit">delete</button>
+		<a href=prodebian.php?id='.$_SESSION['id_prodebian'].'>cancel</a>
 	</form>';
 	my_endpage();
 	exit();

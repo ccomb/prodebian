@@ -12,7 +12,7 @@ wdir=/tmp/prodebian.process$$
 mkdir $wdir
 
 # define the splitting pattern
-pattern="############################_PRODEBIAN_SCRIPT_"
+pattern="#############_PRODEBIAN_SCRIPT_"
 
 # be sure grep is installed
 which grep 2>&1 >/dev/null || apt-get install grep
@@ -30,6 +30,8 @@ while [ $i -le $nbscripts ]; do
   csplit -s -f $wdir/current $script %$pattern$i%+1 /$pattern/
   # execute the script number $i and write in the log
   cd $wdir
+  cat current00 | tr -d '\r' > current00.new # this is a short dos2unix
+  mv current00.new current00
   chmod +x current00
   echo $pattern$i | tee -a $log
   ./current00 2>&1 | tee -a $log
@@ -44,6 +46,11 @@ rm -rf $wdir
 
 # return where we come from
 cd $savewd
+
+# advertise for the log
+echo "${pattern}_INSTALLATION FINISHED"
+echo
+echo "The log file for this installation is $log"
 
 exit
 

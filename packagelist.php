@@ -27,11 +27,11 @@ $packlist = my_array_psql2php($actions['actionvalues']);
 // ADD PACKAGE IF ASKED
 if(isset($_POST['addpackage']) AND $_POST['addpackage']!="") {
 	// try to find the package
-	$res = pg_query($database, "SELECT id_pack FROM packages WHERE pack_name='".$_POST['addpackage']."';") or die();
+	$res = pg_query($database, "SELECT id_pack FROM packages WHERE pack_name='".my_string_php2psql($_POST['addpackage'])."';") or die();
 	$packages = pg_fetch_array($res);
 	// package doesn't exist -> add to the package list
 	if($packages==0) {
-		$res = pg_query($database, "INSERT INTO packages (pack_name) VALUES ('".$_POST['addpackage']."');") or die();
+		$res = pg_query($database, "INSERT INTO packages (pack_name) VALUES ('".my_string_php2psql($_POST['addpackage'])."');") or die();
 		$last_oid = pg_last_oid($res);
 		$res = pg_query($database, "SELECT id_pack FROM packages WHERE oid=".$last_oid.";") or die();
 		$packages = pg_fetch_array($res);
@@ -59,7 +59,7 @@ if(isset($_POST['delete'])) {
 // SAVE TITLE
 if(isset($_POST['title'])) {
 	my_authenticate($prodebians['id_owner']);
-	pg_query($database, "UPDATE actions SET title='".$_POST['title']."' WHERE id_action='".$_GET['id_action']."';") or die();
+	pg_query($database, "UPDATE actions SET title='".my_string_php2psql($_POST['title'])."' WHERE id_action='".$_GET['id_action']."';") or die();
 	my_gotopage("packagelist.php?id_action=".$_GET['id_action']);
 }
 //----------------
@@ -72,10 +72,10 @@ if($actions['title']=="") {
   $actions['title']="(enter a short descriptive title for this action)";
   $onfocus='onFocus="this.value=&quot;&quot;"';
 }
-print '<b>Title: '.$actions['title'].'</b><br />
+print '<b>Title: '.my_string_psql2php($actions['title']).'</b><br />
 <form action="packagelist.php?id_action='.$_GET['id_action'].'" method="POST">
 <button type="submit">save</button>
-<input type="text" name="title" value="'.$actions['title'].'" '.$onfocus.' size="64" maxlength="64" />
+<input type="text" name="title" value="'.my_string_psql2php($actions['title']).'" '.$onfocus.' size="64" maxlength="64" />
 </form>
 
 <hr align="left" size="1" width="100%" />
@@ -101,7 +101,7 @@ if(count($packlist)==0) {
 	foreach($packlist as $id_package) {
 		$res = pg_query($database, "SELECT pack_name, id_pack FROM packages WHERE id_pack='".$id_package."';") or die();
 		$packages = pg_fetch_array($res);
-		print '<input type="checkbox" name="pack'.$i++.'" value="'.$packages['id_pack'].'" />'.$packages['pack_name'].'<br />';
+		print '<input type="checkbox" name="pack'.$i++.'" value="'.$packages['id_pack'].'" />'.my_string_psql2php($packages['pack_name']).'<br />';
 	}
 	print '<button name="delete" type="submit">remove selected packages</button></form>';
 }

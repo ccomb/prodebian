@@ -21,17 +21,27 @@ if(isset($_POST['dlscript']) OR isset($_POST['dlguide'])) {
 //-------------------
 // DOWNLOAD THE INSTALL SCRIPT
 if(isset($_POST['dlscript'])) {
+	// send a header to tell the browser to start downloading
 	//header("Content-type: application/sh");
 	header("Content-Disposition: attachment; filename=prodebian".$_SESSION['id_prodebian']."_install_script.sh");
 
-
+	# send the beginning of the script
+	readfile("prodebian.sh");
+	/*$beginning = "prodebian.sh";
+	$file = fopen("$beginning", "r");
+	$content = fread($file, filesize($beginning));
+	print str_replace("g", "X", $content);
+	fclose($file);*/
+	
+	# send the individual scripts
+	$i=1;
 	foreach($actionlist as $action) {
 		$res = pg_query($database, "SELECT title,actiontype,actionvalues FROM actions WHERE id_action='".$action."';") or die();
 		$actions = pg_fetch_array($res);
-		print "\n\n#".$actions['title']."\n########################";
+		print "\n\n#############_PRODEBIAN_SCRIPT_".$i++." ".$actions['title'];
 		// INSTALL PACKAGE
 		if($actions['actiontype']==1) {
-			print "\napt-get install ";
+			print "\n#!/bin/sh\napt-get install ";
 			//get the package list
 			foreach(my_array_psql2php($actions['actionvalues']) as $id_package) {
 				$res = pg_query($database, "SELECT pack_name FROM packages WHERE id_pack=".$id_package.";") or die();
@@ -40,10 +50,10 @@ if(isset($_POST['dlscript'])) {
 			}
 		}
 		if($actions['actiontype']==4) {
-			$script = my_array_psql2php($actions['actionvalues']);
-			print "\n".substr($script['0'],1,strlen($script['0'])-2);
+			print "\n".my_script_psql2php($actions['actionvalues'])."\n";
 		}
 	}
+	print "#############_PRODEBIAN_SCRIPT_finished";
 	exit();
 }
 //-------------------
@@ -55,7 +65,8 @@ if(isset($_POST['dlguide'])) {
 - boot from the Debian netinst CDROM
 - install the base
 - login as root
-- run script.sh
+- make the script executable with: chmod +x prodebian<nb>_install_script.sh
+- run the prodebian script with: ./prodebian<nb>_install_script.sh
 - enjoy the prodebian
 ';
 	exit();

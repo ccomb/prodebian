@@ -8,10 +8,10 @@ if(isset($_POST['titlecontains'])) {
 	$_SESSION['searchresult'] = array();
 	$_SESSION['searchresult']['titlecontains'] = $_POST['titlecontains'];
 	$database = my_connectdatabase();
-	$from=array("*", "\\", "_", "%", "|", "+", "?", "^", "(", ")", "[", "]", "'", "\"");
-	$to=array("\\\*", "\\\\", "\\\_", "\\\%", "\\\|", "\\\+", "\\\?", "\\\^", "\\\(", "\\\)", "\\\[", "\\\]", "", "");
-	$_POST['titlecontains']=str_replace($from, $to, $_POST['titlecontains']);
-	$result = pg_query($database, "SELECT id_prodebian, title FROM prodebians WHERE title SIMILAR TO '%".$_POST['titlecontains']."%';") or die();
+	//$from=array("*", "\\", "_", "%", "|", "+", "?", "^", "(", ")", "[", "]", "'", "\"");
+	//$to=array("\\\*", "\\\\", "\\\_", "\\\%", "\\\|", "\\\+", "\\\?", "\\\^", "\\\(", "\\\)", "\\\[", "\\\]", "", "");
+	//$_POST['titlecontains']=str_replace($from, $to, $_POST['titlecontains']);
+	$result = pg_query($database, "SELECT id_prodebian, title FROM prodebians WHERE title SIMILAR TO '%".my_string_psql2php($_POST['titlecontains'])."%';") or die();
 }
 
 // store the result in SESSION
