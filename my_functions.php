@@ -40,14 +40,15 @@ function my_printmenu() {
 		print ' | <a href="owner.php">'.$_SESSION['username'].'</a>';
 		print ' (<a href="'.$_SERVER['PHP_SELF'].'?logout'.$and.$_SERVER['QUERY_STRING'].'">logout</a>)';
 	}
-	print "<br /><br />";
+	print '<br /><hr size="1" width="100%" />';
 }
 
 function my_endpage() {
 	// AJOUTER UN FORMULAIRE POUR ENVOYER UN COMMENTAIRE SUR LA PAGE
 	// uncomment to show POST and GET on each page.
 	//print "GET=";print_r($_GET);print "<br />POST=";print_r($_POST);print "<br />SESSION=";print_r($_SESSION);print "<br />";
-	print '</body></html>';
+	
+	print '<hr size="1" width="100%" /><div style="text-align: right"><span style="font-size: smaller;">For bug reports, new features or any other comments, mail to <a href="mailto:ccomb@prodebian.org">ccomb</a></span></div></body></html>';
 }
 
 function my_gotopage($page) {
@@ -70,16 +71,18 @@ function my_string2array($string) {
 	return(explode(",", trim($string,"}{")));
 }
 
-// REMOVE HTML AND PHP TAGS, AND LIMIT THE VARIABLES TO 32 CHAR.
+// REMOVE HTML AND PHP TAGS, LIMIT THE VARIABLES TO 32 CHAR, AND REMOVE DANGEROUS CHARS.
 function my_purge_data() {
+	$from=array("'", "\"");
+	$to=array("”", "”");
 	foreach($_POST as $key => $value) {
 		// this purges the value but not the key!
-		if($key=="desc") $_POST[$key]=substr(strip_tags($value),0,900);
-		else $_POST[$key]=substr(strip_tags($value),0,32);
+		if($key=="desc") $_POST[$key]=substr(strip_tags($value,'<a><b><i><u>'),0,900);
+		else $_POST[$key]=substr(str_replace($from, $to, strip_tags($value)),0,32);
 	}
 	foreach($_GET as $key => $value) {
 		// this purges the value but not the key!
-		$_GET[$key]=substr(strip_tags($value),0,32);
+		$_GET[$key]=substr(str_replace($from, $to, strip_tags($value)),0,32);
 	}
 }
 // authenticate and retry the url after authentication

@@ -30,7 +30,7 @@ if(isset($_POST['addpackage']) AND $_POST['addpackage']!="") {
 		$packages = pg_fetch_array($res);
 	}
 	$found=array_search($packages['id_pack'],$packlist);
-	if(!$found)	array_push($packlist, $packages['id_pack']);
+	if(is_bool($found) AND $found==FALSE) array_push($packlist, $packages['id_pack']);
 	pg_query($database, "UPDATE package_lists SET packlist='".my_array2string($packlist)."'WHERE id_packlist='".$prodebian['id_packlist']."';") or die();
 }
 
@@ -50,6 +50,16 @@ if(isset($_POST['delete'])) {
 // DISPLAY PACKAGE LIST
 my_beginpage();
 my_printmenu();
+//---------------------
+// PROMPT TO ADD A NEW PACKAGE
+
+print '
+Name of package to add : <form action="packagelist.php" method="POST">
+<input type="text" name="addpackage" size="32" maxlength="32" />
+<button name="create" type="submit">add</button></form><br />
+';
+print '<hr align="left" size="2" width="50" />';
+// SHOW THE LIST
 print '<b>Package list of this Prodebian :</b><br />';
 if(count($packlist)==0) {
 	print "
@@ -66,18 +76,10 @@ foreach($packlist as $id_package) {
 	print '<input type="checkbox" name="pack'.$i.'" value="'.$packages['id_pack'].'" />'.$packages['pack_name'].'<br />';
 	$i++;
 }
-print '<button name="delete" type="submit">delete</button></form><br />';
+print '<button name="delete" type="submit">remove</button></form>';
 }
 
-//---------------------
-// PROMPT TO ADD A NEW PACKAGE
 print '<hr align="left" size="2" width="50" />';
-print '
-Name of package to add : <form action="packagelist.php" method="POST">
-<input type="text" name="addpackage" size="32" maxlength="32" />
-<button name="create" type="submit">add</button></form><br />
-';
-
 
 
 //-------------------

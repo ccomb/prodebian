@@ -46,7 +46,7 @@ print '<b>Prodebian #'.$_SESSION['id_prodebian'].'</b>
 <form action="description.php" method="POST">
 Short descriptive title :
 <input type="text" name="name" value="'.$prodebian['name'].'"size="32" maxlength="32" /><br /><br />
-Detailed description: (Limited to 900 chars)<br /><textarea name="desc" rows="15" cols="60">'.$desc.'</textarea><br />
+Detailed description: (Limited to 900 chars. Allowed html tags = &lt;a&gt;&lt;b&gt;&lt;i&gt;&lt;u&gt;)<br /><textarea name="desc" rows="15" cols="60">'.$desc.'</textarea><br />
 <button name="save" type="submit">save</button>
 </form>';
 

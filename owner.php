@@ -125,9 +125,9 @@ if(isset($_GET['id']) AND $_GET['id']==0) {
 		my_printmenu();
 		print '
 			<form action="owner.php" method="POST">
-			Enter your nickname:<br />
-			Prodebian creator: <input type="text" name="username" size="32" maxlength="32" /><br />
-			Creator\'s password: <input type="text" name="password" size="32" maxlength="32" /><br />
+			Enter your username and password,<br />or choose one to create an account:<br />
+			username: <input type="text" name="username" size="32" maxlength="32" /><br />
+			password: <input type="text" name="password" size="32" maxlength="32" /><br />
 			<button name="save" type="submit">save</button>
 			</form>
 	';

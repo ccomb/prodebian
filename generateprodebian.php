@@ -28,6 +28,7 @@ if(isset($_POST['dlscript'])) {
 	//header("Content-type: application/sh");
 	header("Content-Disposition: attachment; filename=prodebian".$_SESSION['id_prodebian']."_install_script.sh");
 	print '#!/bin/bash
+
 apt-get install ';
 	foreach(my_string2array($package_lists['packlist']) as $id_package) {
 		$res = pg_query($database, "SELECT pack_name FROM packages WHERE id_pack=".$id_package.";") or die();
