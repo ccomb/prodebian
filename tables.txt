@@ -16,11 +16,18 @@ CREATE TABLE prodebians (
 );
 //property = private/public, ...
 
- 
+
+CREATE TABLE owners (
+ id_owner       serial PRIMARY KEY,
+ username       varchar(64),
+ email          varchar(64),
+ password       varchar(64)
+);
+
 CREATE TABLE debversions (
  id_debversion  serial PRIMARY KEY,
  id_desc        integer,
- version_name   varchar(64),
+ version_name   
  version_nb     varchar(64)
 );
 

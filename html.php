@@ -46,7 +46,7 @@ function string2array($string) {
 function purge_data() {
 	foreach($_POST as $key => $value) {
 		// this purges the value but not the key!
-		if($key=="desc") $_POST[$key]=substr(strip_tags($value),0,300);
+		if($key=="desc") $_POST[$key]=substr(strip_tags($value),0,900);
 		else $_POST[$key]=substr(strip_tags($value),0,32);
 	}
 	foreach($_GET as $key => $value) {
