@@ -54,8 +54,11 @@ else {
 	print '
 		Choose a short descriptive title for your Prodebian.<br />
 		Prodebian title: <input type="text" name="prodebname" size="32" maxlength="32" /><br />
+		Enter the creator of this prodebian<br />
+		Prodebian creator: <input type="text" name="prodebname" value="<enter your username>" size="32" maxlength="32" /><br />
 		<button name="create" type="submit">create</button>
 	</form>';
+	
 	endpage();
 }
 ?>
