@@ -40,12 +40,12 @@ return pg_connect("host=localhost dbname=prodebian user=ccomb password=prodebian
 
 function array2string($array) {
 //PHP array -> pgsql array
-return "{".implode(",",$array)."}";
+return("{".implode(',',$array)."}");
 }
 
 function string2array($string) {
 //pgsql array -> PHP array
-return explode(",", trim($string,"}{"));
+return(explode(",", trim($string,"}{")));
 }
 
 ?>

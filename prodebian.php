@@ -1,15 +1,16 @@
 <?php
 session_start();
-
+$_SESSION['id_prodebian'] = $_GET['id'];
 include 'html.php';
 beginpage();
 print_menu();
 //-------------------
-$_SESSION['id_prodebian'] = $_GET['id'];
+
 $database = connect_database();
-$res = pg_query($database, "SELECT * FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';");
+
+$res = pg_query($database, "SELECT * FROM prodebians WHERE id_prodebian=".$_SESSION['id_prodebian'].";");
 $prodebian = pg_fetch_array($res);
-$res = pg_query($database, "SELECT * FROM debversions WHERE id_debversion='".$prodebian['id_debversion']."';");
+$res = pg_query($database, "SELECT * FROM debversions WHERE id_debversion=".$prodebian['id_debversion'].";");
 $debversion = pg_fetch_array($res);
 print "<b>".$prodebian['name']."</b><br />";
 print "Prodebian n°".$prodebian['id_prodebian']."<br />";
