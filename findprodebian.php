@@ -1,20 +1,20 @@
 <?php
 session_start();
-include 'html.php';
-purge_data();
+include 'my_functions.php';
+my_purge_data();
 
 
 if(isset($_POST['nameis'])) {
-	$database = connect_database();
+	$database = my_connectdatabase();
 	$res = pg_query($database, "SELECT id_prodebian FROM prodebians WHERE name='".$_POST['nameis']."';");
 	$prodebian = pg_fetch_array($res);
-	goto_page("prodebian.php?id=".$prodebian['id_prodebian']);
+	my_gotopage("prodebian.php?id=".$prodebian['id_prodebian']);
 }
 
 //-------------------
 //PROMPT THE USER
-beginpage();
-print_menu();
+my_beginpage();
+my_printmenu();
 
 print '
 <form action="findprodebian.php" method="POST">
@@ -51,7 +51,7 @@ print '
 ';
 
 if(isset($_POST['namecontains'])) {
-	$database = connect_database();
+	$database = my_connectdatabase();
 	$from=array("*", "\\", "_", "%", "|", "+", "?", "^", "(", ")", "[", "]");
 	$to=array("\\\*", "\\\\", "\\\_", "\\\%", "\\\|", "\\\+", "\\\?", "\\\^", "\\\(", "\\\)", "\\\[", "\\\]");
 	$_POST['namecontains']=str_replace($from, $to, $_POST['namecontains']);
@@ -65,5 +65,5 @@ if(isset($_POST['namecontains'])) {
 print '
 <hr align="left" size="2" width="100%" />
 ';
-endpage();
+my_endpage();
 ?>

@@ -19,9 +19,10 @@ CREATE TABLE prodebians (
 
 CREATE TABLE owners (
  id_owner       serial PRIMARY KEY,
- username       varchar(64),
+ username       varchar(64) UNIQUE,
  email          varchar(64),
- password       varchar(64)
+ password       varchar(64),
+ id_desc        integer
 );
 
 CREATE TABLE debversions (

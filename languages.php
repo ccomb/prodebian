@@ -1,8 +1,8 @@
 <?php
-include('html.php');
-purge_data();
-beginpage();
-print_menu();
+include('my_functions.php');
+my_purge_data();
+my_beginpage();
+my_printmenu();
 //-------------------
 
 // add a form to enter a new language
@@ -12,12 +12,12 @@ print '<form action="languages.php" method="POST">
   <button name="create" type="submit">ajouter</button></form>';
   
 // get the available languages
-$database = connect_database();
+$database = my_connectdatabase();
 $res = pg_query($database, "SELECT * FROM languages ORDER BY language_name;");
 
 
 // insert a new language
-if(isset($_POST['langname']) && isset($_POST['langcode'])) {
+if(isset($_POST['langname']) AND isset($_POST['langcode'])) {
 	$language_found=FALSE;
 	while($languages = pg_fetch_array($res)) {
 		if($languages['language_name']==$_POST['langname']) {$language_found=TRUE;	break;}
@@ -39,7 +39,7 @@ for($row=0; $row<pg_num_rows($res); $row++) {
 pg_close($database);
 
 //-------------------
-endpage();
+my_endpage();
 
 ?>
 

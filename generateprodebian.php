@@ -1,20 +1,20 @@
 <?php
 session_start();
-include 'html.php';
-purge_data();
+include 'my_functions.php';
+my_purge_data();
 
 //===============
 // CHECK ARGUMENTS
-if(!isset($_GET['id']) && !isset($_POST['dlscript']) && !isset($_POST['dlguide'])) goto_page("findprodebian.php");
-if(isset($_GET['id']) && (int)$_GET['id']==0) goto_page("findprodebian.php");
+if(!isset($_GET['id']) AND !isset($_POST['dlscript']) AND !isset($_POST['dlguide'])) my_gotopage("findprodebian.php");
+if(isset($_GET['id']) AND (int)$_GET['id']==0) my_gotopage("findprodebian.php");
 if(isset($_GET['id'])) $_SESSION['id_prodebian'] = $_GET['id'];
 
 //-------------------
 // GET PRODEBIAN DATA
-$database = connect_database();
+$database = my_connectdatabase();
 $res = pg_query($database, "SELECT * FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';");
 $prodebian = pg_fetch_array($res);
-if($prodebian==0) goto_page("error.php?why=invalidprodebian");
+if($prodebian==0) my_gotopage("error.php?why=invalidprodebian");
 $id_packlist = $prodebian['id_packlist'];
 if($id_packlist=='{}') $pack_number=0;
 else {
@@ -29,7 +29,7 @@ if(isset($_POST['dlscript'])) {
 	header("Content-Disposition: attachment; filename=prodebian".$_SESSION['id_prodebian']."_install_script.sh");
 	print '#!/bin/bash
 apt-get install ';
-	foreach(string2array($package_lists['packlist']) as $id_package) {
+	foreach(my_string2array($package_lists['packlist']) as $id_package) {
 		$res = pg_query($database, "SELECT pack_name FROM packages WHERE id_pack=".$id_package.";");
 		$packages = pg_fetch_array($res);
 		print $packages['pack_name']." ";
@@ -52,8 +52,9 @@ if(isset($_POST['dlguide'])) {
 }
 //-------------------
 // GENERATE THE PRODEBIAN
-beginpage();
-print_menu();
+my_beginpage();
+my_printmenu();
+
 print '
 1) Download the Debian netinst ISO image here : <a href=http://debian.org/>netinst.iso</a><br />
 <form action="generateprodebian.php" method="POST">
@@ -63,7 +64,7 @@ print '
 3) Download your Prodebian installation script :<button name="dlscript" type="submit">download script</button>
 </form>
 ';
-endpage();
+my_endpage();
 exit();
 
 

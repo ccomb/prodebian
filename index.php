@@ -1,8 +1,8 @@
 <?php
-include 'html.php';
-beginpage();
+include 'my_functions.php';
+my_beginpage();
 print '
-A Prodebian is a Debian system dedicated to a particular task and/or hardware.<br />
+A Prodebian is a <a href="http://debian.org">Debian</a> system dedicated to a particular task and/or hardware.<br />
 <br />
 <a href="createprodebian.php">Create your Prodebian</a><br />
 <a href="findprodebian.php">Search a Prodebian</a><br />
@@ -11,6 +11,6 @@ A Prodebian is a Debian system dedicated to a particular task and/or hardware.<b
 //<a href="languages.php">Ajouter une nouvelle langue</a>
 
 
-endpage();
+my_endpage();
 
 ?>

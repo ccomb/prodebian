@@ -1,11 +1,11 @@
 <?php
 session_start();
 
-include 'html.php';
-purge_data();
+include 'my_functions.php';
+my_purge_data();
 
-$database = connect_database();
-if(!isset($_SESSION['id_prodebian'])) goto_page("findprodebian.php");
+$database = my_connectdatabase();
+if(!isset($_SESSION['id_prodebian'])) my_gotopage("findprodebian.php");
 
 //-------------------
 // GET THE PACKAGE ID LIST
@@ -15,10 +15,10 @@ $res = pg_query($database, "SELECT packlist FROM package_lists WHERE id_packlist
 $package_lists = pg_fetch_array($res);
 $packlist = $package_lists['packlist'];
 if($packlist=='{}') $packlist=array();
-else $packlist = string2array($packlist);
+else $packlist = my_string2array($packlist);
 
 // ADD PACKAGE IF ASKED
-if(isset($_POST['addpackage']) && $_POST['addpackage']!="") {
+if(isset($_POST['addpackage']) AND $_POST['addpackage']!="") {
 	// try to find the package
 	$res = pg_query($database, "SELECT id_pack FROM packages WHERE pack_name='".$_POST['addpackage']."';");
 	$packages = pg_fetch_array($res);
@@ -31,7 +31,7 @@ if(isset($_POST['addpackage']) && $_POST['addpackage']!="") {
 	}
 	$found=array_search($packages['id_pack'],$packlist);
 	if(!$found)	array_push($packlist, $packages['id_pack']);
-	pg_query($database, "UPDATE package_lists SET packlist='".array2string($packlist)."'WHERE id_packlist='".$prodebian['id_packlist']."';");
+	pg_query($database, "UPDATE package_lists SET packlist='".my_array2string($packlist)."'WHERE id_packlist='".$prodebian['id_packlist']."';");
 }
 
 // REMOVE PACKAGE
@@ -43,13 +43,13 @@ if(isset($_POST['delete'])) {
 			unset($packlist[$delkey]);
 		}
 	}
-	pg_query($database, "UPDATE package_lists SET packlist='".array2string($packlist)."' WHERE id_packlist='".$prodebian['id_packlist']."';");
+	pg_query($database, "UPDATE package_lists SET packlist='".my_array2string($packlist)."' WHERE id_packlist='".$prodebian['id_packlist']."';");
 }
 
 //---------------------
 // DISPLAY PACKAGE LIST
-beginpage();
-print_menu();
+my_beginpage();
+my_printmenu();
 print '<b>Package list of this Prodebian :</b><br />';
 if(count($packlist)==0) {
 	print "
@@ -81,5 +81,5 @@ Name of package to add : <form action="packagelist.php" method="POST">
 
 
 //-------------------
-endpage();
+my_endpage();
 ?>

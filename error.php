@@ -1,12 +1,12 @@
 <?php
 //session_start();
-include 'html.php';
+include 'my_functions.php';
 
-if(!isset($_GET['why'])) goto_page("error.php?why=error");
+if(!isset($_GET['why'])) my_gotopage("error.php?why=error");
 $error = $_GET['why'];
 
-beginpage();
-print_menu();
+my_beginpage();
+my_printmenu();
 //-----------------------
 if($error=="error") {
 	print "error";
@@ -14,6 +14,10 @@ if($error=="error") {
 
 if($error=="inserterror") {
 	print 'Error inserting data to the database.';
+}
+
+if($error=="updateerror") {
+	print 'Error updating data in the database.';
 }
 
 if($error=="invalidprodebian") {
@@ -24,5 +28,8 @@ if($error=="deleteerror") {
 	print 'Error deleting data from the database.';
 }
 
+if($error=="autherror") {
+	print 'Permission denied';
+}
 //-----------------------
-endpage();
+my_endpage();

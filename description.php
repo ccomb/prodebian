@@ -1,15 +1,15 @@
 <?php
-include 'html.php';
-purge_data();
+include 'my_functions.php';
+my_purge_data();
 session_start();
-$database = connect_database();
+$database = my_connectdatabase();
 
 //-------------------
 // CHECK ARGUMENTS
-if(!isset($_SESSION['id_prodebian'])) goto_page("findprodebian.php");
+if(!isset($_SESSION['id_prodebian'])) my_gotopage("findprodebian.php");
 
 // UPDATE TITLE AND DESCRIPTION
-if(isset($_POST['name']) && isset($_POST['desc'])) { // get the description ID
+if(isset($_POST['name']) AND isset($_POST['desc'])) { // get the description ID
 	$res = pg_query($database, "SELECT id_desc FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';");
 	$prodebian = pg_fetch_array($res);
 	if($prodebian['id_desc']=='') { // if no ID, create a description
@@ -22,7 +22,7 @@ if(isset($_POST['name']) && isset($_POST['desc'])) { // get the description ID
 		$res = pg_query($database, "UPDATE prodebians SET name='".$_POST['name']."',id_desc='".$prodebian['id_desc']."' WHERE id_prodebian='".$_SESSION['id_prodebian']."';");
 		$res = pg_query($database, "UPDATE descriptions SET description='".$_POST['desc']."' WHERE id_desc='".$prodebian['id_desc']."';");
 	}
-	goto_page("prodebian.php?id=".$_SESSION['id_prodebian']);
+	my_gotopage("prodebian.php?id=".$_SESSION['id_prodebian']);
 }
 
 //-------------------
@@ -38,8 +38,8 @@ if($prodebian['id_desc']!=NULL) {
 
 //-------------------
 // PROMPT FOR TITLE AND DESCRIPTION
-beginpage();
-print_menu();
+my_beginpage();
+my_printmenu();
 
 print '<b>Prodebian #'.$_SESSION['id_prodebian'].'</b>
 <form action="description.php" method="POST">
@@ -52,5 +52,5 @@ Detailed description: (Limited to 900 chars)<br /><textarea name="desc" rows="15
 
 
 //-------------------
-endpage();
+my_endpage();
 ?>
