@@ -28,6 +28,9 @@ if($error=="deleteerror") {
 	print 'Error deleting data from the database.';
 }
 
+if($error=="selecterror") {
+	print 'Error retrieving data from the database.';
+}
 if($error=="autherror") {
 	print 'Permission denied';
 }

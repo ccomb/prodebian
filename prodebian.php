@@ -16,28 +16,28 @@ if(!isset($_SESSION['id_prodebian'])) my_gotopage("findprodebian.php");
 //-------------------
 // GET PRODEBIAN DATA
 $database = my_connectdatabase();
-$res = pg_query($database, "SELECT * FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';");
+$res = pg_query($database, "SELECT * FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
 $prodebian = pg_fetch_array($res);
 if($prodebian==0) my_gotopage("error.php?why=invalidprodebian");
 // debian version
-$res = pg_query($database, "SELECT * FROM debversions WHERE id_debversion=".$prodebian['id_debversion'].";");
+$res = pg_query($database, "SELECT * FROM debversions WHERE id_debversion=".$prodebian['id_debversion'].";") or die();
 $debversion = pg_fetch_array($res);
 // package list
 $id_packlist = $prodebian['id_packlist'];
 if($id_packlist=='{}') $pack_number=0;
 else {
-	$res = pg_query($database, "SELECT * FROM package_lists WHERE id_packlist=".$id_packlist.";");
+	$res = pg_query($database, "SELECT * FROM package_lists WHERE id_packlist=".$id_packlist.";") or die();
 	$package_lists = pg_fetch_array($res);
 	$pack_number = count(my_string2array($package_lists['packlist']));
 }
 // description
 if(isset($prodebian['id_desc'])) {
-	$res = pg_query($database, "SELECT description FROM descriptions WHERE id_desc='".$prodebian['id_desc']."';");
+	$res = pg_query($database, "SELECT description FROM descriptions WHERE id_desc='".$prodebian['id_desc']."';") or die();
 	$descriptions = pg_fetch_array($res);
 } else $descriptions['description']="No description. Please add one.";
 // owner
 if(isset($prodebian['id_owner'])) {
-	$res = pg_query($database, "SELECT id_owner,username FROM owners WHERE id_owner='".$prodebian['id_owner']."';");
+	$res = pg_query($database, "SELECT id_owner,username FROM owners WHERE id_owner='".$prodebian['id_owner']."';") or die();
 	$owners = pg_fetch_array($res);
 } else { 
 	$owners['username']="(click to appropriate)";

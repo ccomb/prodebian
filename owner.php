@@ -6,15 +6,15 @@ session_start();
 function my_appropriate($id_owner, $id_prodebian) {
 	if(!isset($_SESSION['username']) OR !isset($_SESSION['password'])) my_gotopage("error.php?why=autherror");
 	global $database;
-	$res = pg_query($database, "UPDATE prodebians SET id_owner='".$id_owner."' WHERE id_prodebian='".$id_prodebian."';");
+	$res = pg_query($database, "UPDATE prodebians SET id_owner='".$id_owner."' WHERE id_prodebian='".$id_prodebian."';") or die();
 }
 
 function my_createuser($username, $password) {
 	global $database;
-	$res = pg_query($database, "INSERT INTO owners (username,password) VALUES ('".$username."', '".$password."');");
+	$res = pg_query($database, "INSERT INTO owners (username,password) VALUES ('".$username."', '".$password."');") or die();
 	if(!$res) my_gotopage("error.php?why=inserterror");
 	$last_oid = pg_last_oid($res);
-	$res = pg_query($database, "SELECT id_owner,username,password FROM owners WHERE oid=".$last_oid.";");
+	$res = pg_query($database, "SELECT id_owner,username,password FROM owners WHERE oid=".$last_oid.";") or die();
 	$owners = pg_fetch_array($res);
 	$_SESSION['username']=$owners['username'];
 	$_SESSION['password']=$owners['password'];
@@ -27,31 +27,30 @@ $database = my_connectdatabase();
 // if we get a user id, work on it.
 if(isset($_GET['id']) AND (int)$_GET['id']!=0) {
 	// get data
-	$res = pg_query($database, "SELECT * FROM owners WHERE id_owner='".$_GET['id']."';");
+	$res = pg_query($database, "SELECT * FROM owners WHERE id_owner='".$_GET['id']."';") or die();
 	$owners = pg_fetch_array($res);
 	if($owners['id_desc']=='') $owners['id_desc']=0;
 	if($owners['email']=='') $owners['email']='none';
-	$res = pg_query($database, "SELECT description FROM descriptions WHERE id_desc='".$owners['id_desc']."';");
+	$res = pg_query($database, "SELECT description FROM descriptions WHERE id_desc='".$owners['id_desc']."';") or die();
 	$descriptions = pg_fetch_array($res);
 	if($descriptions['description']=='') $descriptions['description']='(no comment)';
-	$resprodebians = pg_query($database, "SELECT id_prodebian,name FROM prodebians WHERE id_owner='".$owners['id_owner']."';");
-	//$prodebians = pg_fetch_array($res);
+	$resprodebians = pg_query($database, "SELECT id_prodebian,name FROM prodebians WHERE id_owner='".$owners['id_owner']."';") or die();
+	//$prodebians = pg_fetch_array($res);// USE IT TO SHOW THE PRODEBIAN LIST !!!!!!!!!!!!!!!!!!!!!
 	// UPDATE DATA
 	if(isset($_POST['update'])) {
-	//my_beginpage();
 		my_authenticate($_GET['id']);
 		if($owners['id_desc']=='') {
-			$res = pg_query($database, "INSERT INTO descriptions (description) VALUES ('".$_POST['desc']."');");
+			$res = pg_query($database, "INSERT INTO descriptions (description) VALUES ('".$_POST['desc']."');") or die();
 			$last_oid = pg_last_oid($res);
-			$res = pg_query($database, "SELECT id_desc FROM descriptions WHERE oid='".$last_oid."';");
+			$res = pg_query($database, "SELECT id_desc FROM descriptions WHERE oid='".$last_oid."';") or die();
 			$descriptions = pg_fetch_array($res);
-			$res = pg_query($database, "UPDATE owners SET id_desc='".$descriptions['id_desc']."' WHERE id_owner='".$_GET['id']."';");
+			$res = pg_query($database, "UPDATE owners SET id_desc='".$descriptions['id_desc']."' WHERE id_owner='".$_GET['id']."';") or die();
 		} else {
-			$res = pg_query($database, "UPDATE descriptions SET description='".$_POST['desc']."' WHERE id_desc='".$owners['id_desc']."';");
+			$res = pg_query($database, "UPDATE descriptions SET description='".$_POST['desc']."' WHERE id_desc='".$owners['id_desc']."';") or die();
 		}
-		$res = pg_query($database, "UPDATE owners SET email='".$_POST['email']."' WHERE id_owner='".$_GET['id']."';");
+		$res = pg_query($database, "UPDATE owners SET email='".$_POST['email']."' WHERE id_owner='".$_GET['id']."';") or die();
 		if($_POST['password']!='') { 
-			$res = pg_query($database, "UPDATE owners SET password='".$_POST['password']."' WHERE id_owner='".$_GET['id']."';");
+			$res = pg_query($database, "UPDATE owners SET password='".$_POST['password']."' WHERE id_owner='".$_GET['id']."';") or die();
 			$_SESSION['password']=$_POST['password'];
 		}
 		my_gotopage("owner.php?id=".$_GET['id']);
@@ -89,10 +88,10 @@ if(isset($_GET['id']) AND (int)$_GET['id']!=0) {
 //-------------------
 // if we provided user/pass and the prodebian has no user,
 // CREATE USER IF NECESSARY, THEN CREATE TOKEN, AND GIVE HIM THE PRODEBIAN
-$res = pg_query($database, "SELECT id_owner,name FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';");
+$res = pg_query($database, "SELECT id_owner,name FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
 $prodebians = pg_fetch_array($res);
 if(isset($_POST['username']) AND isset($_POST['password']) AND (int)$prodebians['id_owner']==0) {
-	$res = pg_query($database, "SELECT username,id_owner,password FROM owners WHERE username='".$_POST['username']."';");
+	$res = pg_query($database, "SELECT * FROM owners WHERE username='".$_POST['username']."';") or die();
 	$owners = pg_fetch_array($res);
 	if($owners==0) { // create the user, and give him the prodebian
 		$id_owner = my_createuser($_POST['username'], $_POST['password']);
@@ -121,18 +120,24 @@ if(isset($_POST['username']) AND isset($_POST['password']) AND (int)$prodebians[
 	exit();
 }
 
-my_beginpage();
-my_printmenu();
-print '
-	<form action="owner.php" method="POST">
-	Enter your nickname:<br />
-	Prodebian creator: <input type="text" name="username" size="32" maxlength="32" /><br />
-	Creator\'s password: <input type="text" name="password" size="32" maxlength="32" /><br />
-	<button name="save" type="submit">save</button>
-	</form>
-';
-my_endpage();
-
+if(isset($_GET['id']) AND $_GET['id']==0) {
+		my_beginpage();
+		my_printmenu();
+		print '
+			<form action="owner.php" method="POST">
+			Enter your nickname:<br />
+			Prodebian creator: <input type="text" name="username" size="32" maxlength="32" /><br />
+			Creator\'s password: <input type="text" name="password" size="32" maxlength="32" /><br />
+			<button name="save" type="submit">save</button>
+			</form>
+	';
+		my_endpage();
+} else {
+		$res = pg_query($database, "SELECT id_owner FROM owners WHERE username='".$_SESSION['username']."';") or die();
+		$owners = pg_fetch_array($res);
+		my_gotopage("owner.php?id=".$owners['id_owner']);
+}
+//} else my_gotopage("findprodebian.php");
 
 
 ?>

@@ -9,7 +9,7 @@ So you want a particular set of packages, with a particular configuration,
 a customized desktop with predefined icons and predefined shortcuts in mozilla.
 Maybe you want to set-up a small ready-to-use proxy server.
 Or you want a PC dedicated to CD cloning with a minimal user interface.
-Or you just want to store a good standard installation for installing at your friends.<br />
+Or you just want to store a good standard installation for installing at your friends\'.<br />
 <br />
 Find the configuration you need in the Prodebian database, modify an existing one or build your own from scratch!<br />
 <br />

@@ -13,7 +13,7 @@ print '<form action="languages.php" method="POST">
   
 // get the available languages
 $database = my_connectdatabase();
-$res = pg_query($database, "SELECT * FROM languages ORDER BY language_name;");
+$res = pg_query($database, "SELECT * FROM languages ORDER BY language_name;") or die();
 
 
 // insert a new language
@@ -26,8 +26,8 @@ if(isset($_POST['langname']) AND isset($_POST['langcode'])) {
 	if($language_found) {
 		echo "Cette langue existe déjà !<br /><br />";
 	} else {
-		pg_query("INSERT INTO languages VALUES ('".$_POST['langcode']."', '".$_POST['langname']."');");
-		$res = pg_query($database, "SELECT * FROM languages ORDER BY language_name;");
+		pg_query("INSERT INTO languages VALUES ('".$_POST['langcode']."', '".$_POST['langname']."');") or die();
+		$res = pg_query($database, "SELECT * FROM languages ORDER BY language_name;") or die();
 	}
 }
 // display availables languages

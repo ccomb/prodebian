@@ -11,7 +11,7 @@ if(isset($_POST['namecontains'])) {
 	$from=array("*", "\\", "_", "%", "|", "+", "?", "^", "(", ")", "[", "]");
 	$to=array("\\\*", "\\\\", "\\\_", "\\\%", "\\\|", "\\\+", "\\\?", "\\\^", "\\\(", "\\\)", "\\\[", "\\\]");
 	$_POST['namecontains']=str_replace($from, $to, $_POST['namecontains']);
-	$result = pg_query($database, "SELECT id_prodebian, name FROM prodebians WHERE name SIMILAR TO '%".$_POST['namecontains']."%';");
+	$result = pg_query($database, "SELECT id_prodebian, name FROM prodebians WHERE name SIMILAR TO '%".$_POST['namecontains']."%';") or die();
 }
 
 // store the result in SESSION

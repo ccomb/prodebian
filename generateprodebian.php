@@ -12,13 +12,13 @@ if(isset($_GET['id'])) $_SESSION['id_prodebian'] = $_GET['id'];
 //-------------------
 // GET PRODEBIAN DATA
 $database = my_connectdatabase();
-$res = pg_query($database, "SELECT * FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';");
+$res = pg_query($database, "SELECT * FROM prodebians WHERE id_prodebian='".$_SESSION['id_prodebian']."';") or die();
 $prodebian = pg_fetch_array($res);
 if($prodebian==0) my_gotopage("error.php?why=invalidprodebian");
 $id_packlist = $prodebian['id_packlist'];
 if($id_packlist=='{}') $pack_number=0;
 else {
-	$res = pg_query($database, "SELECT * FROM package_lists WHERE id_packlist=".$id_packlist.";");
+	$res = pg_query($database, "SELECT * FROM package_lists WHERE id_packlist=".$id_packlist.";") or die();
 	$package_lists = pg_fetch_array($res);
 }
 
@@ -30,7 +30,7 @@ if(isset($_POST['dlscript'])) {
 	print '#!/bin/bash
 apt-get install ';
 	foreach(my_string2array($package_lists['packlist']) as $id_package) {
-		$res = pg_query($database, "SELECT pack_name FROM packages WHERE id_pack=".$id_package.";");
+		$res = pg_query($database, "SELECT pack_name FROM packages WHERE id_pack=".$id_package.";") or die();
 		$packages = pg_fetch_array($res);
 		print $packages['pack_name']." ";
 	}
